@@ -105,8 +105,8 @@ public class GibbsSamplingConceptLDA {
 	// Path to the concepts lists
 	public String conceptsPath;
 
-	public String expName = "LDAmodel";
-	public String orgExpName = "LDAmodel";
+	public String expName = "conceptLDAmodel";
+	public String orgExpName = "conceptLDAmodel";
 	public String tAssignsFilePath = "";
 	public int savestep = 0;
 
@@ -671,7 +671,7 @@ public class GibbsSamplingConceptLDA {
 	public static void main(String args[])
 		throws Exception
 	{
-		GibbsSamplingConceptLDA clda = new GibbsSamplingConceptLDA("test/corpus.txt", "test/concepts.txt", 7,2, 0.1, 0.01, 2000, 20, "testLDA");
+		GibbsSamplingConceptLDA clda = new GibbsSamplingConceptLDA("concept_lda/test/corpus.txt", "concept_lda/test/concepts.txt", 7,2, 0.1, 0.01, 2000, 20, "testConceptLDA");
 		clda.inference();
 	}
 }
