@@ -53,7 +53,13 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
     # split the dataset into k folds
     kf = KFold(n_splits=k, shuffle=True)
     fold_counter = 0
-    
+    best_results = {
+        "conf" : None, 
+        "model" : None, 
+        "f_score" : 0.0,
+        "p_score" : 0.0,
+        "r_score" : 0.0
+    }
     # for each fold
     for train_index, test_index in kf.split(df['label'], df['text']):
         fold_counter +=1
@@ -97,7 +103,18 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
                                 print('Val score:', val_score)
                                 val_scores.append(val_score)
                                 '''
-                                metrics = extract_P_R_F1(*model.test(test_fold))
+                                N, precision_score, recall_socre, f1_score = extract_P_R_F1(*model.test(test_fold))
+
+                                if f1_score > best_results["f_score"]:
+                                    model_results ={
+                                        "conf" : conf,
+                                        "model" : model, 
+                                        "f_score": f1_score,
+                                        "p_score" : precision_score,
+                                        "r_score" : recall_socre
+                                    }
+
+                                    best_results = model_results
                                 
                             except Exception as e:
                                 print(f"Error for fold={fold_counter} and conf {conf}: {e}")
@@ -106,6 +123,8 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         print('mean train scores: ', np.mean(train_scores))
         print('mean val scores: ', np.mean(val_scores))
         '''
+        print("best results: ", best_results["conf"])
+        print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
         print("************************************ FOLD DONE ************************************")
         
   
