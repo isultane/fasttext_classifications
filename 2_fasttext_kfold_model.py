@@ -40,7 +40,7 @@ def extract_P_R_F1(N, p, r):
     recall_socre = r
     f1_score = (2*precision_score * recall_socre) / (precision_score + recall_socre)
 
-    print("[fold N records:", N, " P: ", precision_score, "R: " ,recall_socre, "F1: ",f1_score, "]")
+    print("[ N records:", N, " P: ", precision_score, "R: " ,recall_socre, "F1: ",f1_score, "]")
     return N, precision_score, recall_socre, f1_score
 
 # this code for testing the approach of k-fold validation
@@ -53,11 +53,7 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
     # split the dataset into k folds
     kf = KFold(n_splits=k, shuffle=True)
     fold_counter = 0
-
-    best_results = {
-        "model": None,
-        "aggr_metrics": {"overall": {"f1":0.0}}
-    }
+    
     # for each fold
     for train_index, test_index in kf.split(df['label'], df['text']):
         fold_counter +=1
@@ -73,21 +69,22 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         # tuning the configurations [lr, epoch, ngram, dim, loss]
         for lr in lrs:
             for epoch in epochs:
-                for ngram in ngrams:
-                    for dim in dims:
-                        for loss_fn in loss_fns:
+                for dim in dims:
+                    for loos_fn in loss_fns:
+                        for ngram in ngrams:
 
-                            conf = [lr, epoch, ngram, dim, loss_fn]
+                            conf = [lr, epoch, dim, loos_fn, ngram]
                             print(conf)
                             try:
                                 # fit model for this set of parameter values
                                 model = fasttext.train_supervised(train_fold,
                                                                 lr = lr, 
                                                                 epoch = epoch, 
-                                                                dim=dim,
-                                                                wordNgrams = ngram,
-                                                                loss = loss_fn)
-                                models.append(model)
+                                                                dim=dim, 
+                                                                loss = loos_fn,
+                                                                wordNgrams = ngram
+                                                               )
+                               # models.append(model) # <-- this is a bug! 
                                 
                                 '''
                                 train_pred = [model.predict(x)[0][0].split('__')[-1] for x in df.iloc[train_index]['label']]
@@ -101,14 +98,7 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
                                 val_scores.append(val_score)
                                 '''
                                 metrics = extract_P_R_F1(*model.test(test_fold))
-                                '''
-                                if metrics["f1_score"] > best_results["aggr_metrics"]["overall"]["f1"]:
-                                    model_results = {
-                                        "model": model,
-                                        "aggr_metrics": metrics['f_score']
-                                    }
-                                    best_results = model_results
-                                '''
+                                
                             except Exception as e:
                                 print(f"Error for fold={fold_counter} and conf {conf}: {e}")
 
@@ -117,7 +107,7 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         print('mean val scores: ', np.mean(val_scores))
         '''
         print("************************************ FOLD DONE ************************************")
-        time.spleep(5)
+        
   
 
     train_time = time.time()
