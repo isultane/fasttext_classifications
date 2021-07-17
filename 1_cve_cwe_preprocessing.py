@@ -9,7 +9,7 @@ from collections import defaultdict
 from types import MethodType, FunctionType
 
 class TransformData(object):
-    # convert csv to fasttext format
+    # convert CVE CWE-tags from csv file to fasttext format
     def to_fasttextFormat(self, inPath, outPath, index=False):
         results = open(outPath, "w+")
         with open  (inPath) as csv_file:
@@ -32,7 +32,7 @@ class TransformData(object):
             results.close
             print(f'Processed {line_count} lines.')
 
-    #clean the final dataset to make sure it is on fasttext format
+    #clean the final dataset to make sure it is on fasttext format and the unlabeled doc to be labeled
     def check_fix_dataset_format(self, inPath, outPath, index=False):
         print("Strats processing fasttext dataset to check incorrect labeld docs")
         # stats varibles for counting the statistics (corrects and incorrect lines 'docs')
@@ -93,7 +93,7 @@ if __name__ == '__main__':
     if( not os.path.exists("cve_cwe_summary_noisy.txt")):
         print("Strart extracting CVE-CWE-Summary from NVD dataset...")
         print("and convert csv to txt format")
-        transData.to_fasttextFormat("CVE_CWE_Summary.csv", "cve_cwe_summary_noisy.txt")
+        transData.to_fasttextFormat("./data/CVE_CWE_Summary.csv", "./data/cve_cwe_summary_noisy.txt")
 
     # check and update incorrect docs(lables) in the dataste
-    transData.check_fix_dataset_format("cve_cwe_summary_noisy.txt", "cve_cwe_summary_clean.txt")
+    transData.check_fix_dataset_format("./data/cve_cwe_summary_noisy.txt", "./data/cve_cwe_summary_clean.txt")
