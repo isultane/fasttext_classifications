@@ -1,11 +1,12 @@
 import time
 from operator import index, mod
-from os import sep
+from os import sep, write
 import fasttext
 import numpy as np
 from numpy.lib.function_base import average
 import pandas as pd
 import re
+import csv
 
 
 from scipy.sparse.sputils import matrix
@@ -43,8 +44,8 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
     start_time = time.time()
     # record results
     models = []
-    train_scores = []
-    val_scores = []
+    #train_scores = []
+    #val_scores = []
     # split the dataset into k folds
     kf = KFold(n_splits=k, shuffle=True)
     fold_counter = 0
@@ -53,7 +54,8 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         "model" : None, 
         "f_score" : 0.0,
         "p_score" : 0.0,
-        "r_score" : 0.0
+        "r_score" : 0.0, 
+        "kfold_counter": 0
     }
     # for each fold
     for train_index, test_index in kf.split(df['label'], df['text']):
@@ -106,7 +108,8 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
                                         "model" : model, 
                                         "f_score": f1_score,
                                         "p_score" : precision_score,
-                                        "r_score" : recall_socre
+                                        "r_score" : recall_socre,
+                                        "kfold_counter": fold_counter
                                     }
 
                                     best_results = model_results
@@ -118,8 +121,11 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         print('mean train scores: ', np.mean(train_scores))
         print('mean val scores: ', np.mean(val_scores))
         '''
-        print("best results: ", best_results["conf"])
-        print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
+        write_kfold_best_results(best_results)
+        best_model = best_results["model"]
+        best_model.save_model("./best_kfold_model/best_kfold"+str(best_results["kfold_counter"])+"_model.bin")
+        #print("best results: ", best_results["conf"])
+        #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
         print("************************************ FOLD DONE ************************************")
         
   
@@ -128,6 +134,12 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
     print('Train time: {:.2f}s'.format(train_time - start_time))
 
     return models
+# write kfold results to CSV file
+def write_kfold_best_results(kfold_results):
+    with open('kfold_best_results.csv', 'a') as results:
+        write = csv.writer(results)
+        write.writerow([kfold_results["conf"], kfold_results["f_score"], kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"]])
+
 
 # read fasttext fromat into dataframe.
 def read_data():
@@ -155,7 +167,7 @@ def read_data():
 df = read_data()
 
 models = fasttext_kfold_model(df, 
-                            k = 3,
+                            k = 2,
                             lrs = [0.1,0.3,0.7,0.9],
                             epochs = [10],
                             dims = [50,100],
