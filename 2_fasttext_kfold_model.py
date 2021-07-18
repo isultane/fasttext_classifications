@@ -122,6 +122,8 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         print('mean val scores: ', np.mean(val_scores))
         '''
         write_kfold_best_results(best_results)
+        
+        # to get the best k-fold model results and save it to be used later
         best_model = best_results["model"]
         best_model.save_model("./best_kfold_model/best_kfold"+str(best_results["kfold_counter"])+"_model.bin")
         #print("best results: ", best_results["conf"])
