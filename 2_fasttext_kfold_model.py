@@ -7,6 +7,7 @@ from numpy.lib.function_base import average
 import pandas as pd
 import re
 
+
 from scipy.sparse.sputils import matrix
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -16,23 +17,17 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
 
 
-class CVEsTagger(object):
- 
-    def split_train_test(datasetFile, testing_size=0.2):
-        # split dataset into train and test, then save them
-        with open(datasetFile, "r") as reader:
-            data = reader.readlines()
-
-        x_train, x_test = train_test_split(data, test_size=testing_size)
-
-        # save training data
-        with open("cve_cwe_summaries.train", 'w') as trainFile:
+def split_train_test(datasetFile, testing_size=0.2):
+     # split dataset into train and test, then save them
+     with open(datasetFile, "r") as reader:
+         data = reader.readlines()
+         x_train, x_test = train_test_split(data, test_size=testing_size)
+         # save training data
+         with open("cve_cwe_summaries.train", 'w') as trainFile:
             trainFile.writelines(x_train)
-        
-        # save testing data
-        with open("cve_cwe_summaries.valid", 'w') as testFile:
+         # save testing data
+         with open("cve_cwe_summaries.valid", 'w') as testFile:
             testFile.writelines(x_test)
-
 
 # function to extract Precision, Recall and F1
 def extract_P_R_F1(N, p, r):
@@ -137,12 +132,10 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
 # read fasttext fromat into dataframe.
 def read_data():
     data = open('./data/testin_fasttext_code_data.train').readlines()
-    count_vect = CountVectorizer()
-
     labels, texts = ([], [])
     for line in data:
         label, text = line.split(' ', 1)
-        text = text.strip('\n')
+        text = text.strip('\n') # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
         labels.append(label)
         texts.append(text)
 
@@ -150,10 +143,12 @@ def read_data():
     trainDF['label'] = labels
     trainDF['text'] = texts
 
+    ''' # if you need to treat the dataset in text fromat to be fit in dataframe
+    count_vect = CountVectorizer()
     matrix = count_vect.fit_transform(trainDF['text'])
     encoder = LabelEncoder()
     targets = encoder.fit_transform(trainDF['label'])
-
+    '''
     return trainDF
 
 
