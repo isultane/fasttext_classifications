@@ -17,13 +17,13 @@ class TransformData(object):
             line_count = 0
             for row in csv_reader:
                 if not row[1]:
-                    row[1] = '__lable__NA'
+                    row[1] = '__label__NA'
                     text = ''.join(row[2:])
                     text = text.replace(',', ' ')
                     results.write(f'{row[1]} {text}\n')
                     line_count +=1
                 else:
-                    row[1] = '__lable__'+ row[1]
+                    row[1] = '__label__'+ row[1]
                     text = ''.join(row[2:])
                     text = text.replace(',', ' ')
                     results.write(f'{row[1]} {text}\n')
@@ -49,12 +49,12 @@ class TransformData(object):
             if line != "\n":
                 line_count += 1
             check_label = line.split()[0]
-            if check_label.find("__lable__") != -1:
+            if check_label.find("__label__") != -1:
                 correctLabeledDoc_count += 1
                 cve_cwe_summary_checked.write(f'{line}')
             elif((not line.split()[1]) or (line.split()[1].find("Unspecified") != -1) or (line.split()[1].find("Unrestricted") != -1)):
                 incorrectLabeledDoc_count += 1
-                correct_lable = '__lable__NA'
+                correct_lable = '__label__NA'
                 text =  ' '.join(line.split()[2:])
                 text = text.replace(',', ' ')
                 cve_cwe_summary_checked.write(f'{correct_lable} {text}\n')
@@ -63,7 +63,7 @@ class TransformData(object):
             elif line.split()[1].find("CWE-") != -1:
               #  print("Here"+ line.split()[1])
                 incorrectLabeledDoc_count += 1
-                correct_lable = '__lable__'+line.split()[1]
+                correct_lable = '__label__'+line.split()[1]
                 text =  ' '.join(line.split()[2:])
                 text = text.replace(',', ' ')
                 cve_cwe_summary_checked.write(f'{correct_lable} {text}\n')
