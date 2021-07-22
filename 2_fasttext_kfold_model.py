@@ -171,12 +171,12 @@ def read_data(training_dataset):
 
 
 # split the data set into training and validating sets
-# split_train_test(source_dataset)
+split_train_test(source_dataset)
 # read the pre-processed dataset into dataframe
 df = read_data(training_dataset)
 
 models = fasttext_kfold_model(df, 
-                            k = 2,
+                            k = 10,
                             lrs = [0.1,0.3,0.7,0.9],
                             epochs = [10],
                             dims = [50,100],
