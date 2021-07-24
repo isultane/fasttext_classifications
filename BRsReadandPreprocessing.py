@@ -26,17 +26,17 @@ def get_keywords(row):
     # tokens = [x.strip() for x in row.split()]
       tokens = word_tokenize(row)
     # convert to lower cases
-    #  tokens = [w.lower() for w in tokens]
+      tokens = [w.lower() for w in tokens]
     
     # prepare regex for char filtering
-    # re_punc = re.compile('[%s]' % re.escape(string.punctuation))
+      re_punc = re.compile('[%s]' % re.escape(string.punctuation))
     # remove punctuation from each word
-    # tokens = [re_punc.sub(' ', w) for w in tokens]
+      tokens = [re_punc.sub(' ', w) for w in tokens]
     # remove remaining tokens that are not alphabetic
-    # tokens = [word for word in tokens if word.isalpha()]
+      tokens = [word for word in tokens if word.isalpha()]
     # filter out stop words
-    #  stop_words = set(stopwords.words('english'))
-    #  tokens = [w for w in tokens if w not in stop_words]
+      stop_words = set(stopwords.words('english'))
+      tokens = [w for w in tokens if w not in stop_words]
     # stemming of words
     # porter = PorterStemmer()
     # stemmed = [porter.stem(word) for word in tokens]

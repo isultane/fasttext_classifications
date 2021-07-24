@@ -1,12 +1,15 @@
 import time
 from operator import index, mod
-from os import sep, write
+from os import read, sep, write
 import fasttext
 import numpy as np
 from numpy.lib.function_base import average
 import pandas as pd
 import re
 import csv
+
+# review it is still not correct!
+from BRsReadandPreprocessing import get_keywords
 
 
 from scipy.sparse.sputils import matrix
@@ -153,7 +156,8 @@ def read_data(training_dataset):
     labels, texts = ([], [])
     for line in data:
         label, text = line.split(' ', 1)
-        text = text.strip('\n') # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
+        text = text.strip('\n')
+        text = get_keywords(text) # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
         labels.append(label)
         texts.append(text)
 
@@ -174,7 +178,7 @@ def read_data(training_dataset):
 split_train_test(source_dataset)
 # read the pre-processed dataset into dataframe
 df = read_data(training_dataset)
-
+'''
 models = fasttext_kfold_model(df, 
                             k = 10,
                             lrs = [0.1,0.3,0.7,0.9],
@@ -182,7 +186,7 @@ models = fasttext_kfold_model(df,
                             dims = [50,100],
                             loss_fns = ["ns", "hs", "softmax", "ova"],
                             ngrams = [1,2,3])
-
+'''
 #if __name__ == '__main__':
    # cve_tagger = CVEsTagger()
    # cve_tagger.fasttext_model_kfold("cve_cwe_summaries.train",10)
