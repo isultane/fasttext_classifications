@@ -14,35 +14,15 @@ from nltk.tokenize import word_tokenize
 #nltk.download('punkt')
 import os
 import glob
+
+# declaration of data sources paths
 filenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/*.csv")
 chromiumFilenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/Chromium_dataset/*.csv")
 
+# saving the pre-processed bug reports
 save_path = '/home/sultan/BRClassifications/'
 
 #outfile = open("Chromium_2_output_preprocessed.txt", "w")
-
-def get_keywords(row):     
-    # split into tokens by white space
-    # tokens = [x.strip() for x in row.split()]
-      tokens = word_tokenize(row)
-    # convert to lower cases
-      tokens = [w.lower() for w in tokens]
-    
-    # prepare regex for char filtering
-      re_punc = re.compile('[%s]' % re.escape(string.punctuation))
-    # remove punctuation from each word
-      tokens = [re_punc.sub(' ', w) for w in tokens]
-    # remove remaining tokens that are not alphabetic
-      tokens = [word for word in tokens if word.isalpha()]
-    # filter out stop words
-      stop_words = set(stopwords.words('english'))
-      tokens = [w for w in tokens if w not in stop_words]
-    # stemming of words
-    # porter = PorterStemmer()
-    # stemmed = [porter.stem(word) for word in tokens]
-    # filter out short tokens
-    #  tokens = [word for word in tokens if len(word) > 2]
-      return ' '.join(tokens).strip()
 
 
 

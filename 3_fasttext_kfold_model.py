@@ -1,3 +1,5 @@
+# Author: Sultan S. Alqahtani
+# Date: 06/16/2021 
 import time
 from operator import index, mod
 from os import read, sep, write
@@ -8,8 +10,8 @@ import pandas as pd
 import re
 import csv
 
-# review it is still not correct!
-from BRsReadandPreprocessing import get_keywords
+from utilities import get_keywords
+from utilities import read_data
 
 
 from scipy.sparse.sputils import matrix
@@ -149,29 +151,6 @@ def write_kfold_best_results(kfold_results):
         write = csv.writer(results)
         write.writerow([kfold_results["conf"], kfold_results["f_score"], kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"]])
 
-
-# read fasttext fromat into dataframe.
-def read_data(training_dataset):
-    data = open(training_dataset).readlines()
-    labels, texts = ([], [])
-    for line in data:
-        label, text = line.split(' ', 1)
-        text = text.strip('\n')
-        text = get_keywords(text) # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
-        labels.append(label)
-        texts.append(text)
-
-    trainDF = pd.DataFrame()
-    trainDF['label'] = labels
-    trainDF['text'] = texts
-
-    ''' # if you need to treat the dataset in text fromat to be fit in dataframe
-    count_vect = CountVectorizer()
-    matrix = count_vect.fit_transform(trainDF['text'])
-    encoder = LabelEncoder()
-    targets = encoder.fit_transform(trainDF['label'])
-    '''
-    return trainDF
 
 
 # split the data set into training and validating sets
