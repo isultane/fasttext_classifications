@@ -15,6 +15,8 @@ from nltk.tokenize import word_tokenize
 import os
 import glob
 
+from utilities import get_keywords
+
 # declaration of data sources paths
 filenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/*.csv")
 chromiumFilenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/Chromium_dataset/*.csv")
