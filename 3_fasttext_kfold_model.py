@@ -139,11 +139,11 @@ def fasttext_kfold_model(df, k, lrs, epochs, dims, loss_fns, ngrams):
         #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
         print("************************************ FOLD DONE ************************************")
         
-  
-
     train_time = time.time()
     print('Train time: {:.2f}s'.format(train_time - start_time))
 
+    #TBC - we need to calcuate the avg for all F1 and save the best model for test and validate in new dataset. 
+    
     return models
 # write kfold results to CSV file
 def write_kfold_best_results(kfold_results):
@@ -157,7 +157,7 @@ def write_kfold_best_results(kfold_results):
 split_train_test(source_dataset)
 # read the pre-processed dataset into dataframe
 df = read_data(training_dataset)
-'''
+
 models = fasttext_kfold_model(df, 
                             k = 10,
                             lrs = [0.1,0.3,0.7,0.9],
@@ -165,7 +165,3 @@ models = fasttext_kfold_model(df,
                             dims = [50,100],
                             loss_fns = ["ns", "hs", "softmax", "ova"],
                             ngrams = [1,2,3])
-'''
-#if __name__ == '__main__':
-   # cve_tagger = CVEsTagger()
-   # cve_tagger.fasttext_model_kfold("cve_cwe_summaries.train",10)

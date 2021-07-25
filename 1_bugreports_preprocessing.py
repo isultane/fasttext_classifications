@@ -2,16 +2,6 @@
 # Author: Sultan S. Alqahtani
 # Date: 06/16/2021 
 import csv
-import nltk
-import pandas as pd
-import re
-import string
-from nltk import sent_tokenize, word_tokenize
-from nltk.corpus import stopwords
-from nltk.stem.porter import PorterStemmer
-from nltk.tokenize import word_tokenize
-#nltk.download('stopwords') # it is used at the first time to download stopwords list
-#nltk.download('punkt')
 import os
 import glob
 
@@ -19,20 +9,17 @@ from utilities import get_keywords
 
 # declaration of data sources paths
 filenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/*.csv")
-chromiumFilenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/Chromium_dataset/*.csv")
 
 # saving the pre-processed bug reports
-save_path = '/home/sultan/BRClassifications/'
+save_path = './data/bug_reports/'
 
-#outfile = open("Chromium_2_output_preprocessed.txt", "w")
-
-
-
+# reading bug reports from csv files.
+# the fuction is preprocessing projects Ambari, Camel, Derby, and Wicket into fasttext format
 def readCSVfiles(file_):
   # preparing the output file path + name
   outfileBasename = os.path.basename(file_)
   outfile = os.path.splitext(outfileBasename)[0]
-  outfile = os.path.join(save_path, outfile+"_Nostem_output_.txt")   
+  outfile = os.path.join(save_path, outfile+"_output_.txt")   
 
   # open the output file for writing
   file_1 = open(outfile, "w")
@@ -60,6 +47,7 @@ def readCSVfiles(file_):
   file_1.close()
   print(f'Processed {line_count} lines.')
 
+# reading chrom bug reports and prepare the data into fasttext format
 def readChromiumFile(file_):
   # preparing the output file path + name
   outfileBasename = os.path.basename(file_)
@@ -92,16 +80,11 @@ def readChromiumFile(file_):
   file_1.close()
   print(f'Processed {line_count} lines.')
 
-# preprocess projects Ambari, Camel, Derby, and Wicket
+# start read bug reports data and convert it into fasttext format
 for f in filenames:
-  print("Reading file: " + os.path.splitext(f)[0])
-  readCSVfiles(f)
-
-
-'''
-# preprocess project Chromium
-
-for f in chromiumFilenames:
-  print("Reading file: " + os.path.splitext(f)[0])
-  readChromiumFile(f)
-'''
+  file_name = os.path.basename(f)
+  print("Reading file: " + file_name)
+  if file_name.startswith("Chromium"):
+    readChromiumFile(f)
+  else:
+    readCSVfiles(f)

@@ -54,3 +54,6 @@ print("Resuts after 3 fold cross validations ...")
 print("LogisticRegression(): ", scores_l)
 print("SVC(): ", scores_svm)
 print("RandomForestClassifier(): ", scores_svm)
+
+# in this .py we need to run the same dataset on SVC, RFC, LR, and other to check the results and compare them with fasttext results.
+# Also, we need to comare the performance for each algoeithm along with the same processed data to fasttext performance.
