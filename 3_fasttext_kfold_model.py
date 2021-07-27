@@ -9,6 +9,7 @@ from numpy.lib.function_base import average
 import pandas as pd
 import re
 import csv
+import glob
 
 from utilities import get_keywords
 from utilities import read_data
@@ -27,7 +28,7 @@ We have two sources of the datasets to be fed in fasttext model:
  1- bug reports datasets
  2- vulnerabilities reports datasets
 '''
-source_dataset = "./data/cve_cwe_summary_clean.txt"
+source_dataset = glob.glob("./data/bug_reports/*.txt") # TBC
 training_dataset = "./data/cve_cwe_summaries.train"
 testing_dataset = "./data/cve_cwe_summaries.valid"
 
@@ -157,7 +158,7 @@ class fasttextModel(object):
         print('Train time: {:.2f}s'.format(train_time - start_time))
 
         return models
-        
+
     # write kfold results to CSV file
     def write_kfold_best_results(self, kfold_results):
         with open('./data/kfold_train_test_data/kfold_best_results.csv', 'a') as results:
