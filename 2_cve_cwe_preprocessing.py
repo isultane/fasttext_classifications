@@ -10,7 +10,7 @@ import csv
 from collections import defaultdict
 from types import MethodType, FunctionType
 
-class TransformData(object):
+class TransformVulnData(object):
     # convert CVE CWE-tags from csv file to fasttext format
     def to_fasttextFormat(self, inPath, outPath, index=False):
         results = open(outPath, "w+")
@@ -89,7 +89,7 @@ class TransformData(object):
 
 if __name__ == '__main__':
     # define class object
-    transData = TransformData()
+    transData = TransformVulnData()
 
     # convert csv to fasttext format
     if( not os.path.exists("cve_cwe_summary_noisy.txt")):
