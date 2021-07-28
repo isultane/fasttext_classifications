@@ -1,3 +1,8 @@
+'''
+# Author: Sultan S. Alqahtani
+# Date: 07/28/2021 
+# It is modified version from original code https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/
+'''
 # roc curve and auc
 import pandas as pd
 from sklearn.datasets import make_classification
@@ -43,6 +48,32 @@ ns_probs = [0 for _ in range(len(testy))]
 model = LogisticRegression(solver='lbfgs', max_iter=1000)
 model.fit(trainX, trainy)
 
+# ******************* ROC Curves and AUC in Python ************** #
+# predict probabilities
+lr_probs = model.predict_proba(testX)
+# keep probabilities for the positive outcome only
+lr_probs = lr_probs[:, 1]
+# calculate scores
+ns_auc = roc_auc_score(testy, ns_probs)
+lr_auc = roc_auc_score(testy, lr_probs)
+# summarize scores
+print('No Skill: ROC AUC=%.3f' % (ns_auc))
+print('Logistic: ROC AUC=%.3f' % (lr_auc))
+# calculate roc curves
+ns_fpr, ns_tpr, _ = roc_curve(testy, ns_probs)
+lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)
+# plot the roc curve for the model
+pyplot.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
+pyplot.plot(lr_fpr, lr_tpr, marker='.', label='Logistic')
+# axis labels
+pyplot.xlabel('False Positive Rate')
+pyplot.ylabel('True Positive Rate')
+# show the legend
+pyplot.legend()
+# show the plot
+pyplot.show()
+
+# ******************* Precision-Recall Curves in Python ************** #
 # predict probabilities
 lr_probs = model.predict_proba(testX)
 # keep probabilities for the positive outcome only
