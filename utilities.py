@@ -36,7 +36,7 @@ def get_keywords(row):
 
 
 # read fasttext fromat into dataframe.
-def read_data(training_dataset):
+def read_training_data(training_dataset):
     data = open(training_dataset).readlines()
     labels, texts = ([], [])
     for line in data:
