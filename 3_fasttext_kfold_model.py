@@ -168,7 +168,10 @@ class fasttextModel(object):
 
 if __name__ == '__main__':
     fasttext_model_object = fasttextModel()
-
+    '''
+    reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
+    .train and .valid format of fasttext.
+    '''
     for project_data in source_dataset:
         project_name = os.path.basename(project_data)
         print("processing project: " + project_name)
