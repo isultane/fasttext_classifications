@@ -2,7 +2,7 @@
 # Date: 06/16/2021 
 import fasttext
 
-model = fasttext.load_model("./data/kfold_train_test_data/best_kfold5_model.bin")
+model = fasttext.load_model("model_ambari.bin")
 
 #print(model.words)
 #print(model.labels)

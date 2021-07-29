@@ -5,6 +5,7 @@
 '''
 # roc curve and auc
 import pandas as pd
+import fasttext
 from sklearn.datasets import make_classification
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -18,7 +19,7 @@ from sklearn.metrics import auc
 
 from matplotlib import pyplot
 # generate 2 class dataset
-data = open('chromium.train').readlines()
+data = open('ambari.valid').readlines()
 
 count_vect = CountVectorizer()
 
@@ -44,27 +45,33 @@ targets = encoder.fit_transform(trainDF['label'])
 trainX, testX, trainy, testy = train_test_split(matrix, targets, test_size=0.5, random_state=2)
 # generate a no skill prediction (majority class)
 ns_probs = [0 for _ in range(len(testy))]
-# fit a model
-model = LogisticRegression(solver='lbfgs', max_iter=1000)
-model.fit(trainX, trainy)
+# load model
+model = fasttext.load_model("model_ambari.bin")
+#model = LogisticRegression(solver='lbfgs', max_iter=1000)
+#model.fit(trainX, trainy)
 
 # ******************* ROC Curves and AUC in Python ************** #
 # predict probabilities
-lr_probs = model.predict_proba(testX)
-# keep probabilities for the positive outcome only
-lr_probs = lr_probs[:, 1]
+lr_probs = []
+for line in trainDF['text']:
+    line = line.replace("\n", " ")
+    pred_label = model.predict(line, k=-1,threshold=0.5)[0][0]
+    lr_probs.append(pred_label)
+
+# keep probabilities for the positive outcome only - still the code has a bug
+lr_probs = lr_probs[:1]
 # calculate scores
 ns_auc = roc_auc_score(testy, ns_probs)
 lr_auc = roc_auc_score(testy, lr_probs)
 # summarize scores
 print('No Skill: ROC AUC=%.3f' % (ns_auc))
-print('Logistic: ROC AUC=%.3f' % (lr_auc))
+print('fasttext: ROC AUC=%.3f' % (lr_auc))
 # calculate roc curves
 ns_fpr, ns_tpr, _ = roc_curve(testy, ns_probs)
 lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)
 # plot the roc curve for the model
 pyplot.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
-pyplot.plot(lr_fpr, lr_tpr, marker='.', label='Logistic')
+pyplot.plot(lr_fpr, lr_tpr, marker='.', label='fasttext')
 # axis labels
 pyplot.xlabel('False Positive Rate')
 pyplot.ylabel('True Positive Rate')
@@ -73,6 +80,7 @@ pyplot.legend()
 # show the plot
 pyplot.show()
 
+'''
 # ******************* Precision-Recall Curves in Python ************** #
 # predict probabilities
 lr_probs = model.predict_proba(testX)
@@ -95,3 +103,4 @@ pyplot.ylabel('Precision')
 pyplot.legend()
 # show the plot
 pyplot.show()
+'''
