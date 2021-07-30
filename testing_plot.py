@@ -19,7 +19,7 @@ from sklearn.metrics import auc
 
 from matplotlib import pyplot
 # generate 2 class dataset
-data = open('chromium.train').readlines()
+data = open('ambari.valid').readlines()
 
 count_vect = CountVectorizer()
 
@@ -46,20 +46,20 @@ trainX, testX, trainy, testy = train_test_split(matrix, targets, test_size=0.5, 
 # generate a no skill prediction (majority class)
 ns_probs = [0 for _ in range(len(testy))]
 # load model
-model = fasttext.load_model("model_cve.bin")
+model = fasttext.load_model("model_ambari.bin")
 #model = LogisticRegression(solver='lbfgs', max_iter=1000)
 #model.fit(trainX, trainy)
 
 # ******************* ROC Curves and AUC in Python ************** #
 # predict probabilities
 lr_probs = []
-predictions = model.predict(trainDF['text'])
-for prediction in predictions:
-    predicted_label = prediction[0][0]
+for text in trainDF['text'].values:
+    text = text.replace("\n", " ")
+    predicted_label = model.predict(text)[1][0]
     lr_probs.append(predicted_label)
 
 # keep probabilities for the positive outcome only - still the code has a bug
-lr_probs = lr_probs[:,1]
+lr_probs = lr_probs[:1] # I come acrorss bug lr_probs size or lenght is inconsistnent with testy - need to be fixed!
 # calculate scores
 ns_auc = roc_auc_score(testy, ns_probs)
 lr_auc = roc_auc_score(testy, lr_probs)

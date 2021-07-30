@@ -2,7 +2,7 @@
 # Date: 06/16/2021 
 import fasttext
 
-model = fasttext.load_model("model_ambari.bin")
+model = fasttext.load_model("model_cve.bin")
 
 #print(model.words)
 #print(model.labels)
