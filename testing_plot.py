@@ -42,24 +42,26 @@ encoder = LabelEncoder()
 targets = encoder.fit_transform(trainDF['label'])
 
 # split into train/test sets
-trainX, testX, trainy, testy = train_test_split(matrix, targets, test_size=0.5, random_state=2)
+trainX, testX, trainy, testy = train_test_split(matrix, targets, test_size=0.2, random_state=2)
 # generate a no skill prediction (majority class)
 ns_probs = [0 for _ in range(len(testy))]
 # load model
-model = fasttext.load_model("model_ambari.bin")
-#model = LogisticRegression(solver='lbfgs', max_iter=1000)
-#model.fit(trainX, trainy)
+#model = fasttext.load_model("model_ambari.bin")
+model = LogisticRegression(solver='lbfgs', max_iter=1000)
+model.fit(trainX, trainy)
 
 # ******************* ROC Curves and AUC in Python ************** #
 # predict probabilities
-lr_probs = []
+lr_probs = model.predict_proba(testX)
+print(lr_probs)
+'''
 for line in trainDF['text']:
     line = line.replace("\n", " ")
     pred_label = model.predict(line, k=-1,threshold=0.5)[0][0]
     lr_probs.append(pred_label)
-
-# keep probabilities for the positive outcome only - still the code has a bug
-lr_probs = lr_probs[:1]
+'''
+# keep probabilities for the positive outcome only 
+lr_probs = lr_probs[:, 1]
 # calculate scores
 ns_auc = roc_auc_score(testy, ns_probs)
 lr_auc = roc_auc_score(testy, lr_probs)

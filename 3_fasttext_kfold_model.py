@@ -191,7 +191,7 @@ if __name__ == '__main__':
         df = read_training_data("./data/bug_reports/"+training_file)
 
         models = fasttext_model_object.fasttext_kfold_model(df,
-                              k=10,
+                              k=2,
                               lrs=[0.1, 0.3, 0.7, 0.9],
                               epochs=[10],
                               dims=[50, 100],
