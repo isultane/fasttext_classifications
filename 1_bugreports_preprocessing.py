@@ -19,7 +19,7 @@ def readCSVfiles(file_):
   # preparing the output file path + name
   outfileBasename = os.path.basename(file_)
   outfile = os.path.splitext(outfileBasename)[0]
-  outfile = os.path.join(save_path, outfile+"_dataset_.txt")   
+  outfile = os.path.join(save_path, outfile+".txt")   
 
   # open the output file for writing
   file_1 = open(outfile, "w")
@@ -33,9 +33,9 @@ def readCSVfiles(file_):
             line_count += 1
         else:
             if row[26] == '1':
-                row[26] = '__label__sec-report'
+                row[26] = '__label__sec'
             else:
-                row[26] = '__label__nonsec-report'
+                row[26] = '__label__nonsec'
             # pre-processing the input file (tokanizing, stop words, etc.)
             row_preprocessed = get_keywords(row[13] + row[14])
 
@@ -52,7 +52,7 @@ def readChromiumFile(file_):
   # preparing the output file path + name
   outfileBasename = os.path.basename(file_)
   outfile = os.path.splitext(outfileBasename)[0]
-  outfile = os.path.join(save_path, outfile+"_dataset_.txt")   
+  outfile = os.path.join(save_path, outfile+".txt")   
 
   # open the output file for writing
   file_1 = open(outfile, "w")
@@ -66,9 +66,9 @@ def readChromiumFile(file_):
             line_count += 1
         else:
             if row[3] == '1':
-                row[3] = '__label__sec-report'
+                row[3] = '__label__sec'
             else:
-                row[3] = '__label__nonsec-report'
+                row[3] = '__label__nonsec'
             # pre-processing the input file (tokanizing, stop words, etc.)
             row_preprocessed = get_keywords(row[2])
 
