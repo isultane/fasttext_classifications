@@ -79,9 +79,9 @@ class fasttextModel(object):
         for train_index, test_index in kf.split(df['label'], df['text']):
             fold_counter += 1
             print("Processing fold: ", fold_counter)
-            train_fold = './data/kfold_train_test_data/fasttext_fold_' + \
+            train_fold = './data/kfold_train_test_data/ft_fold_' + \
                 str(fold_counter)+str(project_name)+'.train'
-            test_fold = './data/kfold_train_test_data/fasttext_fold_' + \
+            test_fold = './data/kfold_train_test_data/ft_fold_' + \
                 str(fold_counter)+str(project_name)+'.valid'
             # save training subset for each fold
             df[['label', 'text']].iloc[train_index].to_csv(
@@ -149,7 +149,7 @@ class fasttextModel(object):
             # to get the best k-fold model results and save it to be used later
             best_model = best_results["model"]
             best_model.save_model("./data/kfold_train_test_data/best_kfold" +
-                              str(best_results["kfold_counter"])+str(project_name)+"_model.bin")
+                              str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print("************************************ FOLD DONE ************************************")
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         df = read_training_data("./data/bug_reports/"+training_file)
 
         models = fasttext_model_object.fasttext_kfold_model(df,
-                              k=2,
+                              k=10,
                               lrs=[0.1, 0.3, 0.7, 0.9],
                               epochs=[10],
                               dims=[50, 100],

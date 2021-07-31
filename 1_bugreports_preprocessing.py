@@ -19,7 +19,7 @@ def readCSVfiles(file_):
   # preparing the output file path + name
   outfileBasename = os.path.basename(file_)
   outfile = os.path.splitext(outfileBasename)[0]
-  outfile = os.path.join(save_path, outfile+"_output_.txt")   
+  outfile = os.path.join(save_path, outfile+"_dataset_.txt")   
 
   # open the output file for writing
   file_1 = open(outfile, "w")
