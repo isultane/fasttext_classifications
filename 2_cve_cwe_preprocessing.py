@@ -95,7 +95,7 @@ if __name__ == '__main__':
     if( not os.path.exists("cve_cwe_summary_noisy.txt")):
         print("Strart extracting CVE-CWE-Summary from NVD dataset...")
         print("and convert csv to txt format")
-        transData.to_fasttextFormat("./data/CVE_CWE_Summary.csv", "./data/cve_cwe_summary_noisy.txt")
+        transData.to_fasttextFormat("./data/vulnerabilities_reports/CVE_CWE_Summary.csv", "./data/vulnerabilities_reports/cve_cwe_summary_noisy.txt")
 
     # check and update incorrect docs(lables) in the dataste
-    transData.check_fix_dataset_format("./data/cve_cwe_summary_noisy.txt", "./data/cve_cwe_summary_clean.txt")
+    transData.check_fix_dataset_format("./data/vulnerabilities_reports/cve_cwe_summary_noisy.txt", "./data/vulnerabilities_reports/cve_cwe_summary_clean.txt")

@@ -28,7 +28,11 @@ We have two sources of the datasets to be fed in fasttext model:
  1- bug reports datasets
  2- vulnerabilities reports datasets
 '''
-source_dataset = glob.glob("./data/bug_reports/*.txt") # source datasets path (bug reports after extracted in fasttext format)
+bugreports_source_dataset = glob.glob(
+    "./data/bug_reports/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
+vulnerabilities_source_dataset = glob.glob(
+    "./data/vulnerabilities_reports/*.txt")  # source datasets path (vuln. reports after extracted in fasttext format)
+
 #training_dataset = glob.glob("./data/bug_reports/*.train")
 #testing_dataset = "./data/cve_cwe_summaries.valid"
 
@@ -40,10 +44,10 @@ class fasttextModel(object):
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
             # save training data
-            with open("./data/bug_reports/"+training_path, 'w') as trainFile:
+            with open("./data/vulnerabilities_reports/"+training_path, 'w') as trainFile:
                 trainFile.writelines(x_train)
             # save testing data
-            with open("./data/bug_reports/"+testing_path, 'w') as testFile:
+            with open("./data/vulnerabilities_reports/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
     # function to extract Precision, Recall and F1
 
@@ -103,12 +107,12 @@ class fasttextModel(object):
                                 try:
                                     # fit model for this set of parameter values
                                     model = fasttext.train_supervised(train_fold,
-                                                                  lr=lr,
-                                                                  epoch=epoch,
-                                                                  dim=dim,
-                                                                  loss=loos_fn,
-                                                                  wordNgrams=ngram
-                                                                  )
+                                                                      lr=lr,
+                                                                      epoch=epoch,
+                                                                      dim=dim,
+                                                                      loss=loos_fn,
+                                                                      wordNgrams=ngram
+                                                                      )
                                     # models.append(model) # <-- this is a bug!
 
                                     '''
@@ -123,7 +127,7 @@ class fasttextModel(object):
                                     val_scores.append(val_score)
                                     '''
                                     N, precision_score, recall_socre, f1_score = self.extract_P_R_F1(
-                                    *model.test(test_fold))
+                                        *model.test(test_fold))
 
                                     if f1_score > best_results["f_score"]:
                                         model_results = {
@@ -138,7 +142,8 @@ class fasttextModel(object):
                                         best_results = model_results
 
                                 except Exception as e:
-                                    print(f"Error for fold={fold_counter} and conf {conf}: {e}")
+                                    print(
+                                        f"Error for fold={fold_counter} and conf {conf}: {e}")
 
             '''
             print('mean train scores: ', np.mean(train_scores))
@@ -149,10 +154,11 @@ class fasttextModel(object):
             # to get the best k-fold model results and save it to be used later
             best_model = best_results["model"]
             best_model.save_model("./data/kfold_train_test_data/best_k" +
-                              str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+                                  str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
-            print("************************************ FOLD DONE ************************************")
+            print(
+                "************************************ FOLD DONE ************************************")
 
         train_time = time.time()
         print('Train time: {:.2f}s'.format(train_time - start_time))
@@ -164,18 +170,22 @@ class fasttextModel(object):
         with open('./data/kfold_train_test_data/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
-                       kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"], pname])
+                            kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"], pname])
+
 
 if __name__ == '__main__':
     fasttext_model_object = fasttextModel()
     '''
-    reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
+    1- for bug reeport project: reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
     .train and .valid format of fasttext.
+    2- for security vuln. project: reading CVEs and thier associated labels from CWEs, preprocessed the dataset, and split into train/test and create the model.
     '''
-    for project_data in source_dataset:
+ #  for project_data in bugreports_source_dataset:
+    for project_data in vulnerabilities_source_dataset:
         project_name = os.path.basename(project_data)
         print("processing project: " + project_name)
 
+        # prepare .train and .valid files names
         training_file = project_name.split('.')[0]
         training_file = training_file + '.train'
         print(training_file)
@@ -185,17 +195,21 @@ if __name__ == '__main__':
         print(testing_file)
 
         # split the data set into training and validating sets
-        fasttext_model_object.split_train_test(project_data, training_file, testing_file)
+        fasttext_model_object.split_train_test(
+            project_data, training_file, testing_file)
         # read the pre-processed dataset into dataframe - TBC
-        
-        df = read_training_data("./data/bug_reports/"+training_file)
+
+      # df = read_training_data("./data/bug_reports/"+training_file)
+        df = read_training_data("./data/vulnerabilities_reports/"+training_file)
+
 
         models = fasttext_model_object.fasttext_kfold_model(df,
-                              k=10,
-                              lrs=[0.1, 0.3, 0.7, 0.9],
-                              epochs=[10],
-                              dims=[50, 100],
-                              loss_fns=["ns", "hs", "softmax", "ova"],
-                              ngrams=[1, 2, 3],
-                              project_name=project_name.split('.')[0])
-
+                                                            k=10,
+                                                            lrs=[
+                                                                0.1, 0.3, 0.7, 0.9],
+                                                            epochs=[10],
+                                                            dims=[50, 100],
+                                                            loss_fns=[
+                                                                "ns", "hs", "softmax", "ova"],
+                                                            ngrams=[1, 2, 3],
+                                                            project_name=project_name.split('.')[0])
