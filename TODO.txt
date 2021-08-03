@@ -1,0 +1,5 @@
+- fixing issue: FastText recall is 'nan' but precision is a number. And the soltuion is pip3 install git+https://github.com/facebookresearch/fastText.git@b64e359d5485dda4b4b5074494155d18e25c8d13 
+- fasttext model used to classifiy bug reports (security and non-security labels) [Done!]
+- fasttext molde used to tagging the security reports with multiple labels [underprocess]
+- Calcluate ROC and AUC [underprocess]
+- writing the methodology section [ not schedule]

@@ -51,10 +51,10 @@ def extract_P_R_F1(self, N, p, r):
  
 
 #test_sentences = open('ambari.valid').readlines()
-model = fasttext.load_model("./data/kfold_train_test_data/best_kfold6_Ambari_output__model.bin")
+model = fasttext.load_model("model_ambari.bin")
 
-print(model.test('./data/bug_reports/Ambari_output_.valid'))
-print(model.test_label('./data/bug_reports/Ambari_output_.valid'))
+print(model.test('ambari.valid'))
+print(model.test_label('ambari.valid'))
 '''
 
 trainX, testX, trainy, testy = split_df(test_sentences)
