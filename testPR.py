@@ -12,5 +12,4 @@ print(model.predict("xss security report"))
 print(model.test("./data/kfold_train_test_data/ft_k10_cve_cwe_summary_clean.train"))
 '''
 
-
 print(model.test_label("ambari.valid"))
