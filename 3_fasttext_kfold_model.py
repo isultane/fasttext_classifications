@@ -33,10 +33,6 @@ bugreports_source_dataset = glob.glob(
 vulnerabilities_source_dataset = glob.glob(
     "./data/vulnerabilities_reports/*.txt")  # source datasets path (vuln. reports after extracted in fasttext format)
 
-#training_dataset = glob.glob("./data/bug_reports/*.train")
-#testing_dataset = "./data/cve_cwe_summaries.valid"
-
-
 class fasttextModel(object):
     def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.2):
         # split dataset into train and test, then save them
@@ -44,13 +40,13 @@ class fasttextModel(object):
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
             # save training data
-            with open("./data/vulnerabilities_reports/"+training_path, 'w') as trainFile:
+            with open("./data/bug_reports/"+training_path, 'w') as trainFile:
                 trainFile.writelines(x_train)
             # save testing data
-            with open("./data/vulnerabilities_reports/"+testing_path, 'w') as testFile:
+            with open("./data/bug_reports/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
-    # function to extract Precision, Recall and F1
 
+    # function to extract Precision, Recall and F1
     def extract_P_R_F1(self, N, p, r):
         precision_score = p
         recall_socre = r
@@ -153,7 +149,7 @@ class fasttextModel(object):
 
             # to get the best k-fold model results and save it to be used later
             best_model = best_results["model"]
-            best_model.save_model("./data/kfold_train_test_data/best_k" +
+            best_model.save_model("./data/best_kfold_models/best_k" +
                                   str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
@@ -167,7 +163,7 @@ class fasttextModel(object):
 
     # write kfold results to CSV file
     def write_kfold_best_results(self, kfold_results, pname):
-        with open('./data/kfold_train_test_data/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
+        with open('./data/best_kfold_models/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
                             kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"], pname])
@@ -180,8 +176,8 @@ if __name__ == '__main__':
     .train and .valid format of fasttext.
     2- for security vuln. project: reading CVEs and thier associated labels from CWEs, preprocessed the dataset, and split into train/test and create the model.
     '''
- #  for project_data in bugreports_source_dataset:
-    for project_data in vulnerabilities_source_dataset:
+    for project_data in bugreports_source_dataset:
+#    for project_data in vulnerabilities_source_dataset:
         project_name = os.path.basename(project_data)
         print("processing project: " + project_name)
 
@@ -199,8 +195,8 @@ if __name__ == '__main__':
             project_data, training_file, testing_file)
         # read the pre-processed dataset into dataframe - TBC
 
-      # df = read_training_data("./data/bug_reports/"+training_file)
-        df = read_training_data("./data/vulnerabilities_reports/"+training_file)
+        df = read_training_data("./data/bug_reports/"+training_file)
+      # df = read_training_data("./data/vulnerabilities_reports/"+training_file)
 
 
         models = fasttext_model_object.fasttext_kfold_model(df,
