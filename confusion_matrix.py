@@ -1,7 +1,8 @@
 import argparse
 import numpy as np
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from sklearn.metrics import accuracy_score
+import pandas as pd
+
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, confusion_matrix
 from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 
@@ -10,16 +11,27 @@ import matplotlib.pyplot as plt
 import fasttext
 import re
 
+def predict_probs(testfile, model):
+    # Return predictions probabilities
+    lines = open(testfile, 'r').readlines()
+    pred_probs = []
+
+    for line in lines:
+        text = ' '.join(line.split()[2:])
+        prob = model.predict([re.sub('\n', ' ', text)])[1][0]
+        pred_probs.append(prob)
+    return pred_probs
+
 def predict_labels(testfile, model):
     # Return predictions
     lines = open(testfile, 'r').readlines()
-    predicted_lables = []
+    pred_label = []
 
     for line in lines:
         text = ' '.join(line.split()[2:])
         label = model.predict([re.sub('\n', ' ', text)])[0][0]
-        predicted_lables.append(label)
-    return predicted_lables
+        pred_label.append(str(label).replace('[','').replace(']','').replace('"','').replace('\'',''))
+    return pred_label
 
 def parse_labels(testfile):
     #return test labeles
@@ -31,30 +43,62 @@ def parse_labels(testfile):
 
     return test_lables
 
+# Function to calculate Precision and Recall.
+# Source: https://medium.com/@douglaspsteen/precision-recall-curves-d32e5b290248
+def calc_precision_recall(y_true, y_pred):
+    
+    # Convert predictions to series with index matching y_true
+   # y_pred = pd.Series(y_pred, index=y_true.index)
+    
+    # Instantiate counters
+    TP = 0
+    FP = 0
+    FN = 0
+
+    # Determine whether each prediction is TP, FP, TN, or FN
+    for i in range(len(y_true)): 
+     #   print("Predicted label:",y_pred[i], "True label: "+y_true[i])
+        if (y_true[i]==y_pred[i]=='__label__sec-report')or (y_true[i]==y_pred[i]=='__label__nonsec-report'):
+           TP += 1
+        if (y_pred[i]=='__label__nonsec-report') and (y_true[i]!=y_pred[i]):
+           FP += 1
+        if (y_pred[i]=='__label__sec-report') and (y_true[i]!=y_pred[i]):
+           FN += 1
+    
+    
+    # Calculate true positive rate and false positive rate
+    # Use try-except statements to avoid problem of dividing by 0
+    try:
+        precision = TP / (TP + FP)
+    except:
+        precision = 1
+    
+    try:
+        recall = TP / (TP + FN)
+    except:
+        recall = 1
+
+    return precision, recall
+
 if __name__ == "__main__":
     test_labels = parse_labels('ambari.valid')
 
     pred_labels = predict_labels('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
-    
-    eq = test_labels == pred_labels
-    #print("Accuracy: " + str(eq.sum() / len(test_labels)))
+    #pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
+
+    # hard coded P and R
+    print(calc_precision_recall(test_labels, pred_labels))
+
+    # using existing python library to calculat P and R
     cm = confusion_matrix(test_labels, pred_labels)
     print(cm)
     print("Accuracy Score: " , accuracy_score(test_labels, pred_labels))
     print("Recall Score: ", recall_score(test_labels, pred_labels, average=None))
     print("Precision Score: ", precision_score(test_labels, pred_labels, average=None))
 
-
-    ## Create the Confusion Matrix Display Object(cmd_obj). Note the 
-    ## alphabetical sorting order of the labels.
-    cmd_obj = ConfusionMatrixDisplay(cm, display_labels=['non-security', 'security'])
-
-    cmd_obj.plot()
-
-    cmd_obj.ax_.set(
-                title='Sklearn Confusion Matrix with labels!!', 
-                xlabel='Predicted labels', 
-                ylabel='Actual labels')
-    ## Finally, call the matplotlib show() function to display the visualization
-    ## of the Confusion Matrix.
-    plt.show()
+    '''
+    # solution exlained here but I'm not confident 100%. https://stackoverflow.com/questions/45713695/fasttext-precision-and-recall-trade-off/65757511?noredirect=1#comment121322970_65757511
+    # the plot still not working
+    auc = roc_auc_score(test_labels, pred_probs)
+    print('ROC AUC=%.3f' % (auc))
+    '''
