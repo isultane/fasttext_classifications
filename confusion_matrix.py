@@ -57,7 +57,7 @@ def calc_precision_recall(y_true, y_pred):
 
     # Determine whether each prediction is TP, FP, TN, or FN
     for i in range(len(y_true)): 
-     #   print("Predicted label:",y_pred[i], "True label: "+y_true[i])
+        print("Predicted label:",y_pred[i], "True label: "+y_true[i])
         if (y_true[i]==y_pred[i]=='__label__sec-report')or (y_true[i]==y_pred[i]=='__label__nonsec-report'):
            TP += 1
         if (y_pred[i]=='__label__nonsec-report') and (y_true[i]!=y_pred[i]):
@@ -77,18 +77,21 @@ def calc_precision_recall(y_true, y_pred):
         recall = TP / (TP + FN)
     except:
         recall = 1
+    
+    f1_score = (2*precision * recall) / \
+            (precision + recall)
 
-    return precision, recall
+    return precision, recall, f1_score
 
 if __name__ == "__main__":
-    test_labels = parse_labels('ambari.valid')
+    test_labels = parse_labels('cooking.valid')
 
-    pred_labels = predict_labels('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
+    pred_labels = predict_labels('cooking.valid', model=fasttext.load_model("model_cooking.bin"))
     #pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
 
     # hard coded P and R
     print(calc_precision_recall(test_labels, pred_labels))
-
+    '''
     # using existing python library to calculat P and R
     cm = confusion_matrix(test_labels, pred_labels)
     print(cm)
@@ -96,7 +99,7 @@ if __name__ == "__main__":
     print("Recall Score: ", recall_score(test_labels, pred_labels, average=None))
     print("Precision Score: ", precision_score(test_labels, pred_labels, average=None))
 
-    '''
+    
     # solution exlained here but I'm not confident 100%. https://stackoverflow.com/questions/45713695/fasttext-precision-and-recall-trade-off/65757511?noredirect=1#comment121322970_65757511
     # the plot still not working
     auc = roc_auc_score(test_labels, pred_probs)
