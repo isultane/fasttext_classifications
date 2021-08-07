@@ -133,7 +133,7 @@ if __name__ == "__main__":
     '''
     # hard coded P and R
     print(calc_precision_recall(test_labels, pred_labels))
-    '''
+    
     # using existing python library to calculat P and R
     cm = confusion_matrix(test_labels, pred_labels)
     print(cm)
