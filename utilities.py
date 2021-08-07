@@ -100,7 +100,6 @@ def calc_precision_recall_f1(y_true, y_pred):
         if (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
            FN += 1
     
-    
     # Calculate true positive rate and false positive rate
     # Use try-except statements to avoid problem of dividing by 0
     try:
