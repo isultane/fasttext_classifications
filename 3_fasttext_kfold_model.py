@@ -13,6 +13,9 @@ import glob
 
 from utilities import get_keywords
 from utilities import read_training_data
+from utilities import parse_labels
+from utilities import predict_labels
+from utilities import calc_precision_recall_f1
 
 
 from scipy.sparse.sputils import matrix
@@ -45,17 +48,6 @@ class fasttextModel(object):
             # save testing data
             with open("./data/bug_reports/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
-
-    # function to extract Precision, Recall and F1
-    def extract_P_R_F1(self, N, p, r):
-        precision_score = p
-        recall_socre = r
-        f1_score = (2*precision_score * recall_socre) / \
-            (precision_score + recall_socre)
-
-        print("[ N records:", N, " P: ", precision_score,
-              "R: ", recall_socre, "F1: ", f1_score, "]")
-        return N, precision_score, recall_socre, f1_score
 
     # this code for testing the approach of k-fold validation
     def fasttext_kfold_model(self, df, k, lrs, epochs, dims, loss_fns, ngrams, project_name):
@@ -111,20 +103,12 @@ class fasttextModel(object):
                                                                       )
                                     # models.append(model) # <-- this is a bug!
 
-                                    '''
-                                    train_pred = [model.predict(x)[0][0].split('__')[-1] for x in df.iloc[train_index]['label']]
-                                    train_score = f1_score(df['label'].values[train_index].astype(str), train_pred, average='macro')
-                                    print('Train score:', train_score)
-                                    train_scores.append(train_score)
+                                    test_labels = parse_labels(test_fold)
+                                    pred_labels = predict_labels(test_fold, model)
+                                    precision_score, recall_socre, f1_score = calc_precision_recall_f1(test_labels, pred_labels)
+                                    print("P: ",precision_score , " R: ",recall_socre," F1: ",f1_score)
 
-                                    val_pred = [model.predict(x)[0][0].split('__')[-1] for x in df.iloc[test_index]['label']]
-                                    val_score = f1_score(df['label'].values[test_index].astype(str), val_pred, average='macro')
-                                    print('Val score:', val_score)
-                                    val_scores.append(val_score)
-                                    '''
-                                    N, precision_score, recall_socre, f1_score = self.extract_P_R_F1(
-                                        *model.test(test_fold))
-
+                                    # select best values fold
                                     if f1_score > best_results["f_score"]:
                                         model_results = {
                                             "conf": conf,
@@ -149,8 +133,7 @@ class fasttextModel(object):
 
             # to get the best k-fold model results and save it to be used later
             best_model = best_results["model"]
-            best_model.save_model("./data/best_kfold_models/best_k" +
-                                  str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+            best_model.save_model("./data/best_kfold_models/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print(
@@ -167,7 +150,6 @@ class fasttextModel(object):
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
                             kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"], pname])
-
 
 if __name__ == '__main__':
     fasttext_model_object = fasttextModel()

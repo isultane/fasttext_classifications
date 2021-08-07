@@ -60,7 +60,7 @@ def calc_precision_recall(y_true, y_pred):
 
     # Determine whether each prediction is TP, FP, TN, or FN
     for i in range(len(y_true)): 
-     #   print("Predicted label:",y_pred[i], "True label: "+y_true[i])
+        print("Predicted label:",y_pred[i], "True label: "+y_true[i])
         if (y_true[i]==y_pred[i]=='__label__sec-report')or (y_true[i]==y_pred[i]=='__label__nonsec-report'):
            TP += 1
         if (y_pred[i]=='__label__nonsec-report') and (y_true[i]!=y_pred[i]):
@@ -80,6 +80,9 @@ def calc_precision_recall(y_true, y_pred):
         recall = TP / (TP + FN)
     except:
         recall = 1
+    
+    f1_score = (2*precision * recall) / \
+            (precision + recall)
 
     return precision, recall
 def conv_to_numric(actual_labels):
@@ -130,7 +133,7 @@ if __name__ == "__main__":
     '''
     # hard coded P and R
     print(calc_precision_recall(test_labels, pred_labels))
-
+    '''
     # using existing python library to calculat P and R
     cm = confusion_matrix(test_labels, pred_labels)
     print(cm)
