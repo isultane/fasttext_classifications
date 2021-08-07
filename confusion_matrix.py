@@ -3,10 +3,13 @@ import numpy as np
 import pandas as pd
 
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, confusion_matrix
-from sklearn.metrics import recall_score
-from sklearn.metrics import precision_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pyplot
 
 import fasttext
 import re
@@ -19,7 +22,7 @@ def predict_probs(testfile, model):
     for line in lines:
         text = ' '.join(line.split()[2:])
         prob = model.predict([re.sub('\n', ' ', text)])[1][0]
-        pred_probs.append(prob)
+        pred_probs.append(str(prob).replace('[','').replace(']','').replace('"','').replace('\'',''))
     return pred_probs
 
 def predict_labels(testfile, model):
@@ -79,13 +82,52 @@ def calc_precision_recall(y_true, y_pred):
         recall = 1
 
     return precision, recall
-
+def conv_to_numric(actual_labels):
+    numric_labels = []
+    for i in range(0, len(actual_labels)):
+        if actual_labels[i] == '__label__nonsec-report':
+            numric_labels.append(int(0))
+        else:
+            numric_labels.append(int(1))
+    return numric_labels
+        
 if __name__ == "__main__":
     test_labels = parse_labels('ambari.valid')
+    test_y = conv_to_numric(test_labels)
+
+    ns_probs = [0 for _ in range(len(test_y))]
+
+    #print(test_y)
 
     pred_labels = predict_labels('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
-    #pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
+    pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
 
+    lr_probs = np.array(pred_probs, dtype=float)
+    # keep probabilities for the positive outcome only 
+    #lr_probs = lr_probs[:, 1]
+
+    # calculate scores
+    ns_auc = roc_auc_score(test_y, ns_probs)
+    lr_auc = roc_auc_score(test_y, lr_probs)
+
+    # summarize scores
+    print('No Skill: ROC AUC=%.3f' % (ns_auc))
+    print('fasttext: ROC AUC=%.3f' % (lr_auc))
+
+    # calculate roc curves
+    ns_fpr, ns_tpr, _ = roc_curve(test_y, ns_probs)
+    lr_fpr, lr_tpr, _ = roc_curve(test_y, lr_probs)
+    # plot the roc curve for the model
+    pyplot.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
+    pyplot.plot(lr_fpr, lr_tpr, marker='.', label='fasttext')
+    # axis labels
+    pyplot.xlabel('False Positive Rate')
+    pyplot.ylabel('True Positive Rate')
+    # show the legend
+    pyplot.legend()
+    # show the plot
+    pyplot.show()
+    '''
     # hard coded P and R
     print(calc_precision_recall(test_labels, pred_labels))
 
@@ -96,9 +138,33 @@ if __name__ == "__main__":
     print("Recall Score: ", recall_score(test_labels, pred_labels, average=None))
     print("Precision Score: ", precision_score(test_labels, pred_labels, average=None))
 
-    '''
-    # solution exlained here but I'm not confident 100%. https://stackoverflow.com/questions/45713695/fasttext-precision-and-recall-trade-off/65757511?noredirect=1#comment121322970_65757511
+
+    # solution inspired from answer on SO: https://stackoverflow.com/questions/45713695/fasttext-precision-and-recall-trade-off/65757511?noredirect=1#comment121322970_65757511
     # the plot still not working
-    auc = roc_auc_score(test_labels, pred_probs)
+    auc = roc_auc_score(test_y, np.array(pred_probs, dtype=float))
     print('ROC AUC=%.3f' % (auc))
-    '''
+
+    # calculate roc curve
+    fpr, tpr, _ = roc_curve(test_y, np.array(pred_probs, dtype=float))
+
+    # plot the roc curve for the model
+    pyplot.plot(fpr, tpr, marker='.', label='ROC curve')
+    # axis labels
+    pyplot.xlabel('False Positive Rate (sensitivity)')
+    pyplot.ylabel('True Positive Rate (specificity)')
+    # show the legend
+    pyplot.legend()
+    # show the plot
+    pyplot.show()   
+
+    precision_values, recall_values, _ = precision_recall_curve(test_y, np.array(pred_probs, dtype=float))
+    # plot the precision-recall curves
+    pyplot.plot(recall_values, precision_values, marker='.', label='Precision,Recall')
+    # axis labels
+    pyplot.xlabel('Recall')
+    pyplot.ylabel('Precision')
+    # show the legend
+    pyplot.legend()
+    # show the plot
+    pyplot.show()
+'''
