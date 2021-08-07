@@ -93,11 +93,11 @@ def calc_precision_recall_f1(y_true, y_pred):
     # Determine whether each prediction is TP, FP, TN, or FN
     for i in range(len(y_true)): 
         #print("Predicted label:",y_pred[i], "True label: "+y_true[i])
-        if (y_true[i]==y_pred[i]=='__label__sec-report')or (y_true[i]==y_pred[i]=='__label__nonsec-report'):
+        if (y_true[i]==y_pred[i]=='__label__sec')or (y_true[i]==y_pred[i]=='__label__nonsec'):
            TP += 1
-        if (y_pred[i]=='__label__nonsec-report') and (y_true[i]!=y_pred[i]):
+        if (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
            FP += 1
-        if (y_pred[i]=='__label__sec-report') and (y_true[i]!=y_pred[i]):
+        if (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
            FN += 1
     
     
