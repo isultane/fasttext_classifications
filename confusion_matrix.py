@@ -94,6 +94,18 @@ def conv_to_numric(actual_labels):
             numric_labels.append(int(1))
     return numric_labels
         
+def roc_auc_plot(test_lbls, pred_lbls):
+    tp=0; fp=0; fn=0; tn=0
+    threshold = 0.5
+
+    for tlbl in test_lbls: 
+        for predlbls in pred_lbls:
+            actual = tlbl
+            prediction = predlbls
+
+            if prediction >= threshold:
+                 TBC
+
 if __name__ == "__main__":
     test_labels = parse_labels('ambari.valid')
     test_y = conv_to_numric(test_labels)
