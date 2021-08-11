@@ -123,16 +123,12 @@ def roc_auc_plot(test_lbls, pred_lbls):
                 fp = fp + 1
             elif actual == 0 and prediction_class == 0:
                 tn = tn + 1
-
-        try:
-            fpr = fp / (tn + fp)
-        except:
-            fpr = 1
-    
-        try:
-            tpr = tp / (tp + fn)
-        except:
-            tpr = 1
+        #    print(threshold, tp, fn, fp, tn)
+       
+        fpr = fp / (tn + fp)
+        tpr = tp / (tp + fn)
+        
+        print(fpr, tpr)
         roc_point.append([tpr, fpr])
 
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
@@ -156,7 +152,7 @@ if __name__ == "__main__":
 
     lr_probs = np.array(pred_probs, dtype=float)
 
-    roc_auc_plot(ns_probs, lr_probs)
+    roc_auc_plot(test_y, lr_probs)
     # keep probabilities for the positive outcome only 
     #lr_probs = lr_probs[:, 1]
     '''
