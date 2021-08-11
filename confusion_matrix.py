@@ -95,16 +95,53 @@ def conv_to_numric(actual_labels):
     return numric_labels
         
 def roc_auc_plot(test_lbls, pred_lbls):
-    tp=0; fp=0; fn=0; tn=0
-    threshold = 0.5
+        
+    thresholds = list(np.array(list(range(0,105,5)))/100)
+    data = list(zip(test_lbls, pred_lbls))
+    df = pd.DataFrame(data, columns=['actuals', 'predictions'])
+    df = df.explode('actuals')
 
-    for tlbl in test_lbls: 
-        for predlbls in pred_lbls:
-            actual = tlbl
-            prediction = predlbls
+    roc_point = []
+
+    for threshold in thresholds:
+        tp=0; fp=0; fn=0; tn=0
+
+        for index, instance in df.iterrows():
+            actual = instance['actuals']
+            prediction = instance['predictions']
 
             if prediction >= threshold:
-                 TBC
+                prediction_class = 1
+            else:
+                prediction_class = 0
+
+            if actual == 1 and prediction_class == 1:
+                tp = tp + 1
+            elif actual == 1 and prediction_class == 0:
+                fn = fn + 1
+            elif actual == 0 and prediction_class == 1:
+                fp = fp + 1
+            elif actual == 0 and prediction_class == 0:
+                tn = tn + 1
+
+        try:
+            fpr = fp / (tn + fp)
+        except:
+            fpr = 1
+    
+        try:
+            tpr = tp / (tp + fn)
+        except:
+            tpr = 1
+        roc_point.append([tpr, fpr])
+
+    pivot = pd.DataFrame(roc_point, columns=["x", "y"])
+    pivot["threshold"] = thresholds
+
+    pyplot.scatter(pivot.y, pivot.x)
+    pyplot.show()
+        
+            
 
 if __name__ == "__main__":
     test_labels = parse_labels('ambari.valid')
@@ -118,9 +155,11 @@ if __name__ == "__main__":
     pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
 
     lr_probs = np.array(pred_probs, dtype=float)
+
+    roc_auc_plot(ns_probs, lr_probs)
     # keep probabilities for the positive outcome only 
     #lr_probs = lr_probs[:, 1]
-
+    '''
     # calculate scores
     ns_auc = roc_auc_score(test_y, ns_probs)
     lr_auc = roc_auc_score(test_y, lr_probs)
@@ -142,7 +181,7 @@ if __name__ == "__main__":
     pyplot.legend()
     # show the plot
     pyplot.show()
-    '''
+    
     # hard coded P and R
     print(calc_precision_recall(test_labels, pred_labels))
     
