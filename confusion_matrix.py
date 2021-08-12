@@ -128,14 +128,27 @@ def roc_auc_plot(test_lbls, pred_lbls):
         fpr = fp / (tn + fp)
         tpr = tp / (tp + fn)
         
-        print(fpr, tpr)
+       
         roc_point.append([tpr, fpr])
 
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
     pivot["threshold"] = thresholds
 
-    pyplot.scatter(pivot.y, pivot.x)
+    #pyplot.scatter(pivot.y, pivot.x)
+    pyplot.plot(pivot.y, pivot.x, marker='.', label='ambari test')
+
+    pyplot.plot([0,1])
+    pyplot.xlabel("false postive rate")
+    pyplot.ylabel("true positive rate")
+    # show the legend
+    pyplot.legend()
+    # show the plot
     pyplot.show()
+
+    # AUC score
+    auc = round(abs(np.trapz(pivot.x, pivot.y)),4)
+
+    print("AUC score: ", auc)
         
             
 
