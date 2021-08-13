@@ -19,7 +19,7 @@ from sklearn.metrics import auc
 
 from matplotlib import pyplot
 # generate 2 class dataset
-data = open('ambari.valid').readlines()
+data = open('./data/bug_reports/Ambari.valid').readlines()
 
 count_vect = CountVectorizer()
 
@@ -53,7 +53,7 @@ model.fit(trainX, trainy)
 # ******************* ROC Curves and AUC in Python ************** #
 # predict probabilities
 lr_probs = model.predict_proba(testX)
-print(lr_probs)
+
 '''
 for line in trainDF['text']:
     line = line.replace("\n", " ")
@@ -62,6 +62,7 @@ for line in trainDF['text']:
 '''
 # keep probabilities for the positive outcome only 
 lr_probs = lr_probs[:, 1]
+print(lr_probs)
 # calculate scores
 ns_auc = roc_auc_score(testy, ns_probs)
 lr_auc = roc_auc_score(testy, lr_probs)

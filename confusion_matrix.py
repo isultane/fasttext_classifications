@@ -61,11 +61,11 @@ def calc_precision_recall(y_true, y_pred):
     # Determine whether each prediction is TP, FP, TN, or FN
     for i in range(len(y_true)): 
         print("Predicted label:",y_pred[i], "True label: "+y_true[i])
-        if (y_true[i]==y_pred[i]=='__label__sec-report')or (y_true[i]==y_pred[i]=='__label__nonsec-report'):
+        if (y_true[i]==y_pred[i]=='__label__sec')or (y_true[i]==y_pred[i]=='__label__nonsec'):
            TP += 1
-        if (y_pred[i]=='__label__nonsec-report') and (y_true[i]!=y_pred[i]):
+        if (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
            FP += 1
-        if (y_pred[i]=='__label__sec-report') and (y_true[i]!=y_pred[i]):
+        if (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
            FN += 1
     
     
@@ -88,26 +88,29 @@ def calc_precision_recall(y_true, y_pred):
 def conv_to_numric(actual_labels):
     numric_labels = []
     for i in range(0, len(actual_labels)):
-        if actual_labels[i] == '__label__nonsec-report':
+        if actual_labels[i] == '__label__nonsec':
             numric_labels.append(int(0))
         else:
             numric_labels.append(int(1))
     return numric_labels
         
 if __name__ == "__main__":
-    test_labels = parse_labels('ambari.valid')
+    test_labels = parse_labels('./data/bug_reports/Ambari.valid')
     test_y = conv_to_numric(test_labels)
 
     ns_probs = [0 for _ in range(len(test_y))]
 
     #print(test_y)
 
-    pred_labels = predict_labels('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
-    pred_probs = predict_probs('ambari.valid', model=fasttext.load_model("model_ambari.bin"))
-
+    pred_labels = predict_labels('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k4_Ambari_model.bin"))
+    pred_probs = predict_probs('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k4_Ambari_model.bin"))
+    print(pred_probs)
+    
     lr_probs = np.array(pred_probs, dtype=float)
+    
     # keep probabilities for the positive outcome only 
-    #lr_probs = lr_probs[:, 1]
+    lr_probs = lr_probs[:, 1]
+    print(lr_probs)
 
     # calculate scores
     ns_auc = roc_auc_score(test_y, ns_probs)
