@@ -135,7 +135,7 @@ def roc_auc_plot(test_lbls, pred_lbls):
     pivot["threshold"] = thresholds
 
     #pyplot.scatter(pivot.y, pivot.x)
-    pyplot.plot(pivot.y, pivot.x, marker='.', label='ambari test')
+    pyplot.plot(pivot.y, pivot.x, marker='.', label='chromium test')
 
     pyplot.plot([0,1])
     pyplot.xlabel("false postive rate")
@@ -153,16 +153,16 @@ def roc_auc_plot(test_lbls, pred_lbls):
             
 
 if __name__ == "__main__":
-    test_labels = parse_labels('./data/bug_reports/Ambari.valid')
+    test_labels = parse_labels('./data/bug_reports/Chromium.valid')
     test_y = conv_to_numric(test_labels)
 
     ns_probs = [0 for _ in range(len(test_y))]
 
     #print(test_y)
 
-    pred_labels = predict_labels('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k4_Ambari_model.bin"))
-    pred_probs = predict_probs('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k4_Ambari_model.bin"))
-    print(pred_probs)
+    pred_labels = predict_labels('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+    pred_probs = predict_probs('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+   # print(pred_probs)
     
     lr_probs = np.array(pred_probs, dtype=float)
 
