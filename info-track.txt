@@ -10,3 +10,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
     - soltuion for this issue: https://gist.github.com/loretoparisi/41b918add11893d761d0ec12a3a4e1aa#file-fasttext_confusion_matrix-py 
 - it might be useful for Calcluate predictions for kfold: https://www.kaggle.com/heesoo37/facebook-s-fasttext-algorithm 
 - confusin matrix is solved hard coded from the model.bin [check the results with other projects]
+- Precision and Recall are high but ROC and AUC did not show me good results (not satisfied)
