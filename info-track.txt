@@ -1,15 +1,16 @@
-- fixing issue: FastText recall is 'nan' but precision is a number. And the soltuion is pip3 install git+https://github.com/facebookresearch/fastText.git@b64e359d5485dda4b4b5074494155d18e25c8d13 
-- fasttext model used to classifiy bug reports (security and non-security labels) [Done!]
-- fasttext molde used to tagging the security reports with multiple labels [underprocess]
-- Calcluate ROC and AUC [underprocess]
-- writing the methodology section [ not schedule]
-- on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
+- [Fixed!] fixing issue: FastText recall is 'nan' but precision is a number. And the soltuion is pip3 install git+https://github.com/facebookresearch/fastText.git@b64e359d5485dda4b4b5074494155d18e25c8d13 
+- [Done!] fasttext model used to classifiy bug reports (security and non-security labels) 
+- [Underprocess] fasttext molde used to tagging the security reports with multiple labels 
+- [Underprocess] Calcluate ROC and AUC 
+- [Not schedule] writing the methodology section 
+- [Done!] on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
 model = fasttext.load_model("model_ambari.bin") (working good)
-- Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
+- [Done!] Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
     - useful links: https://github.com/facebookresearch/fastText/issues/93
     - soltuion for this issue: https://gist.github.com/loretoparisi/41b918add11893d761d0ec12a3a4e1aa#file-fasttext_confusion_matrix-py 
-- it might be useful for Calcluate predictions for kfold: https://www.kaggle.com/heesoo37/facebook-s-fasttext-algorithm 
-- confusin matrix is solved hard coded from the model.bin [check the results with other projects]
-- Precision and Recall are high but ROC and AUC did not show me good results (not satisfied). Useful links to read:
+- [Underprocess] it might be useful for Calcluate predictions for kfold: https://www.kaggle.com/heesoo37/facebook-s-fasttext-algorithm 
+- [Done!] confusin matrix is solved hard coded from the model.bin [check the results with other projects]
+- [Underprocess] Precision and Recall are high but ROC and AUC did not show me good results (not satisfied). Useful links to read:
     1- https://stackoverflow.com/questions/47104129/getting-a-low-roc-auc-score-but-a-high-accuracy/47111246
     2- https://stackoverflow.com/questions/34698161/how-to-interpret-almost-perfect-accuracy-and-auc-roc-but-zero-f1-score-precisio 
+    3- https://vitalflux.com/micro-average-macro-average-scoring-metrics-multi-class-classification-python/
