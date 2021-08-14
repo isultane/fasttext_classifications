@@ -95,9 +95,9 @@ def calc_precision_recall_f1(y_true, y_pred):
         #print("Predicted label:",y_pred[i], "True label: "+y_true[i])
         if (y_true[i]==y_pred[i]=='__label__sec')or (y_true[i]==y_pred[i]=='__label__nonsec'):
            TP += 1
-        if (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
+        elif (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
            FP += 1
-        if (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
+        elif (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
            FN += 1
     
     # Calculate true positive rate and false positive rate

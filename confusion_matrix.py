@@ -94,8 +94,8 @@ def conv_to_numric(actual_labels):
             numric_labels.append(int(1))
     return numric_labels
         
-def roc_auc_plot(test_lbls, pred_lbls):
-        
+def roc_auc_calc(test_lbls, pred_lbls):
+
     thresholds = list(np.array(list(range(0,105,5)))/100)
     data = list(zip(test_lbls, pred_lbls))
     df = pd.DataFrame(data, columns=['actuals', 'predictions'])
@@ -131,8 +131,11 @@ def roc_auc_plot(test_lbls, pred_lbls):
        
         roc_point.append([tpr, fpr])
 
+    return roc_point
+
+def plot_roc(roc_point):
+
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
-    pivot["threshold"] = thresholds
 
     #pyplot.scatter(pivot.y, pivot.x)
     pyplot.plot(pivot.y, pivot.x, marker='.', label='chromium test')
@@ -150,21 +153,43 @@ def roc_auc_plot(test_lbls, pred_lbls):
 
     print("AUC score: ", auc)
 
+def precisio_recall_plot(test_y, pred_probs):
+    precision_values, recall_values, _ = precision_recall_curve(test_y, np.array(pred_probs, dtype=float))
+    # plot the precision-recall curves
+    pyplot.plot(recall_values, precision_values, marker='.', label='Precision,Recall')
+    # axis labels
+    pyplot.xlabel('Recall')
+    pyplot.ylabel('Precision')
+    # show the legend
+    pyplot.legend()
+    # show the plot
+    pyplot.show()
+
 if __name__ == "__main__":
+
+    # get list of labeles to be tested 
     test_labels = parse_labels('./data/bug_reports/Chromium.valid')
+    # convert the labels inro nummric - security is ONE and non security is ZERO
     test_y = conv_to_numric(test_labels)
 
+    # generate a no skill prediction (majority class)
     ns_probs = [0 for _ in range(len(test_y))]
 
-    #print(test_y)
-
+    # get list of predicted labels - security or non security
     pred_labels = predict_labels('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+    # get list of predicted labels probabilities
     pred_probs = predict_probs('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
-   # print(pred_probs)
     
     lr_probs = np.array(pred_probs, dtype=float)
 
-   #roc_auc_plot(test_y, lr_probs)
+    # hardcoded for calcualting ROC and AUC
+    roc_point = roc_auc_calc(test_y, lr_probs)
+    # plot ROC curve
+    plot_roc(roc_point)
+
+    # plot precision and recall curve
+    precisio_recall_plot(test_y, pred_probs)
+    
     # keep probabilities for the positive outcome only 
     #lr_probs = lr_probs[:, 1]
     '''
@@ -220,14 +245,4 @@ if __name__ == "__main__":
     # show the plot
     pyplot.show()   
 '''
-    precision_values, recall_values, _ = precision_recall_curve(test_y, np.array(pred_probs, dtype=float))
-    # plot the precision-recall curves
-    pyplot.plot(recall_values, precision_values, marker='.', label='Precision,Recall')
-    # axis labels
-    pyplot.xlabel('Recall')
-    pyplot.ylabel('Precision')
-    # show the legend
-    pyplot.legend()
-    # show the plot
-    pyplot.show()
-
+   
