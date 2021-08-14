@@ -19,7 +19,7 @@ from sklearn.metrics import auc
 
 from matplotlib import pyplot
 # generate 2 class dataset
-data = open('./data/bug_reports/Ambari.valid').readlines()
+data = open('./data/bug_reports/Chromium.valid').readlines()
 
 count_vect = CountVectorizer()
 
@@ -68,13 +68,13 @@ ns_auc = roc_auc_score(testy, ns_probs)
 lr_auc = roc_auc_score(testy, lr_probs)
 # summarize scores
 print('No Skill: ROC AUC=%.3f' % (ns_auc))
-print('fasttext: ROC AUC=%.3f' % (lr_auc))
+print('Logistic Regression: ROC AUC=%.3f' % (lr_auc))
 # calculate roc curves
 ns_fpr, ns_tpr, _ = roc_curve(testy, ns_probs)
 lr_fpr, lr_tpr, _ = roc_curve(testy, lr_probs)
 # plot the roc curve for the model
 pyplot.plot(ns_fpr, ns_tpr, linestyle='--', label='No Skill')
-pyplot.plot(lr_fpr, lr_tpr, marker='.', label='fasttext')
+pyplot.plot(lr_fpr, lr_tpr, marker='.', label='Logistic Regression')
 # axis labels
 pyplot.xlabel('False Positive Rate')
 pyplot.ylabel('True Positive Rate')

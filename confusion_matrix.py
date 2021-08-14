@@ -149,8 +149,6 @@ def roc_auc_plot(test_lbls, pred_lbls):
     auc = round(abs(np.trapz(pivot.x, pivot.y)),4)
 
     print("AUC score: ", auc)
-        
-            
 
 if __name__ == "__main__":
     test_labels = parse_labels('./data/bug_reports/Chromium.valid')
@@ -160,13 +158,13 @@ if __name__ == "__main__":
 
     #print(test_y)
 
-    pred_labels = predict_labels('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
-    pred_probs = predict_probs('./data/bug_reports/Ambari.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+    pred_labels = predict_labels('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+    pred_probs = predict_probs('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
    # print(pred_probs)
     
     lr_probs = np.array(pred_probs, dtype=float)
 
-    roc_auc_plot(test_y, lr_probs)
+   #roc_auc_plot(test_y, lr_probs)
     # keep probabilities for the positive outcome only 
     #lr_probs = lr_probs[:, 1]
     '''
@@ -192,8 +190,9 @@ if __name__ == "__main__":
     # show the plot
     pyplot.show()
     
+    
     # hard coded P and R
-    print(calc_precision_recall(test_labels, pred_labels))
+    #print(calc_precision_recall(test_labels, pred_labels))
     
     # using existing python library to calculat P and R
     cm = confusion_matrix(test_labels, pred_labels)
@@ -220,7 +219,7 @@ if __name__ == "__main__":
     pyplot.legend()
     # show the plot
     pyplot.show()   
-
+'''
     precision_values, recall_values, _ = precision_recall_curve(test_y, np.array(pred_probs, dtype=float))
     # plot the precision-recall curves
     pyplot.plot(recall_values, precision_values, marker='.', label='Precision,Recall')
@@ -231,4 +230,4 @@ if __name__ == "__main__":
     pyplot.legend()
     # show the plot
     pyplot.show()
-'''
+
