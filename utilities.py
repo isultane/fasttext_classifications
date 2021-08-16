@@ -86,33 +86,24 @@ def calc_precision_recall_f1(y_true, y_pred):
    # y_pred = pd.Series(y_pred, index=y_true.index)
     
     # Instantiate counters
-    TP = 0
-    FP = 0
-    FN = 0
+    TP = 0; FP = 0; FN = 0; TN = 0
 
     # Determine whether each prediction is TP, FP, TN, or FN
     for i in range(len(y_true)): 
         #print("Predicted label:",y_pred[i], "True label: "+y_true[i])
-        if (y_true[i]==y_pred[i]=='__label__sec')or (y_true[i]==y_pred[i]=='__label__nonsec'):
+        if y_true[i]=='__label__sec' and y_pred[i]=='__label__sec':
            TP += 1
-        elif (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
+        elif y_true[i]=='__label__sec' and y_pred[i]=='__label__nonsec':
+           FN +=1
+        elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__sec':
            FP += 1
-        elif (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
-           FN += 1
+        elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__nonsec':
+           TN += 1
     
     # Calculate true positive rate and false positive rate
     # Use try-except statements to avoid problem of dividing by 0
-    try:
-        precision = TP / (TP + FP)
-    except:
-        precision = 1
-    
-    try:
-        recall = TP / (TP + FN)
-    except:
-        recall = 1
-    
-    f1_score = (2*precision * recall) / \
-            (precision + recall)
+    precision = TP / (TP + FP)
+    recall = TP / (TP + FN)
+    f1_score = (2*precision * recall) / (precision + recall)
 
     return precision, recall, f1_score

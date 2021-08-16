@@ -4,12 +4,11 @@ import pandas as pd
 
 from utilities import calc_precision_recall_f1
 
-from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, confusion_matrix
+from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, confusion_matrix, recall_score, precision_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
-from sklearn.metrics import roc_auc_score
 
 import matplotlib.pyplot as pyplot
 
@@ -98,7 +97,7 @@ def conv_to_numric(actual_labels):
         
 def roc_auc_calc(test_lbls, pred_lbls):
 
-    thresholds = list(np.array(list(range(0,105,5)))/100)
+    thresholds = list(np.array(list(range(0,105,1)))/100)
     data = list(zip(test_lbls, pred_lbls))
     df = pd.DataFrame(data, columns=['actuals', 'predictions'])
     df = df.explode('actuals')
@@ -139,7 +138,7 @@ def plot_roc(roc_point):
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
    
     #pyplot.scatter(pivot.y, pivot.x)
-    pyplot.plot(pivot.y, pivot.x, marker='.', label='chromium test') # change between x and y
+    pyplot.plot(pivot.x, pivot.y, marker='.', label='chromium test') # change between x and y
 
     pyplot.plot([0,1])
     pyplot.xlabel("false postive rate")
@@ -166,6 +165,27 @@ def precisio_recall_plot(test_y, pred_probs):
     # show the plot
     pyplot.show()
 
+def testPR(test,pred):
+    # Determine whether each prediction is TP, FP, TN, or FN
+    TP=0; FP=0; FN=0; TN=0
+
+    for i in range(len(test)): 
+        if test[i]=='__label__sec' and pred[i]=='__label__sec':
+           TP += 1
+        elif test[i]=='__label__sec' and pred[i]=='__label__nonsec':
+           FN +=1
+        elif test[i]=='__label__nonsec' and pred[i]=='__label__sec':
+           FP += 1
+        elif test[i]=='__label__nonsec' and pred[i]=='__label__nonsec':
+           TN += 1
+    recall = TP / (TP + FN)
+    precision = TP / (TP + FP)
+    f1_score = (2*precision * recall) / (precision + recall)
+
+    print("Recall: ", recall)
+    print("Precision: ", precision)
+    print("F1: ", f1_score)   
+     
 if __name__ == "__main__":
 
     # get list of labeles to be tested 
@@ -183,15 +203,15 @@ if __name__ == "__main__":
     
  #   print(calc_precision_recall_f1(test_labels, pred_labels))
     lr_probs = np.array(pred_probs, dtype=float)
+    testPR (test_labels, pred_labels)
 
-  #  print(lr_probs)
-    
+    '''    
     # hardcoded for calcualting ROC and AUC
-    roc_point = roc_auc_calc(test_y, lr_probs)
+    #roc_point = roc_auc_calc(test_y, lr_probs)
     # plot ROC curve
-    plot_roc(roc_point)
+    #plot_roc(roc_point)
 
-    '''
+  
     # plot precision and recall curve
     precisio_recall_plot(test_y, pred_probs)
     
@@ -224,22 +244,25 @@ if __name__ == "__main__":
     # hard coded P and R
     #print(calc_precision_recall(test_labels, pred_labels))
     
-    # using existing python library to calculat P and R
-    cm = confusion_matrix(test_labels, pred_labels)
-    print(cm)
-    print("Accuracy Score: " , accuracy_score(test_labels, pred_labels))
-    print("Recall Score: ", recall_score(test_labels, pred_labels, average=None))
-    print("Precision Score: ", precision_score(test_labels, pred_labels, average=None))
-
+    
+    
 
     # solution inspired from answer on SO: https://stackoverflow.com/questions/45713695/fasttext-precision-and-recall-trade-off/65757511?noredirect=1#comment121322970_65757511
     # the plot still not working
     auc = roc_auc_score(test_y, np.array(pred_probs, dtype=float))
     print('ROC AUC=%.3f' % (auc))
+    # using existing python library to calculat P and R
+    cm = confusion_matrix(test_labels, pred_labels)
+    print(cm)
+    print("Accuracy Score: " , accuracy_score(test_labels, pred_labels))
+    print("Recall Score: ", recall_score(test_labels, pred_labels, average='micro'))
+    print("Precision Score: ", precision_score(test_labels, pred_labels, average='micro'))
 
     # calculate roc curve
     fpr, tpr, _ = roc_curve(test_y, np.array(pred_probs, dtype=float))
 
+    # no skill plot
+    pyplot.plot([0,1])
     # plot the roc curve for the model
     pyplot.plot(fpr, tpr, marker='.', label='ROC curve')
     # axis labels
@@ -250,4 +273,3 @@ if __name__ == "__main__":
     # show the plot
     pyplot.show()   
 '''
-   
