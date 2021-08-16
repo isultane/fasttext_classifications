@@ -54,7 +54,7 @@ model.fit(trainX, trainy)
 # ******************* ROC Curves and AUC in Python ************** #
 # predict probabilities
 lr_probs = model.predict_proba(testX)
-
+print(lr_probs)
 '''
 for line in trainDF['text']:
     line = line.replace("\n", " ")
