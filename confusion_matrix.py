@@ -125,11 +125,10 @@ def roc_auc_calc(test_lbls, pred_lbls):
                 fp = fp + 1
             elif actual == 0 and prediction_class == 0:
                 tn = tn + 1
-        #    print(threshold, tp, fn, fp, tn)
+            #print(threshold, tp, fn, fp, tn)
        
         fpr = fp / (tn + fp)
         tpr = tp / (tp + fn)
-        
        
         roc_point.append([tpr, fpr])
 
@@ -138,9 +137,9 @@ def roc_auc_calc(test_lbls, pred_lbls):
 def plot_roc(roc_point):
 
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
-
+   
     #pyplot.scatter(pivot.y, pivot.x)
-    pyplot.plot(pivot.y, pivot.x, marker='.', label='chromium test')
+    pyplot.plot(pivot.y, pivot.x, marker='.', label='chromium test') # change between x and y
 
     pyplot.plot([0,1])
     pyplot.xlabel("false postive rate")
@@ -182,14 +181,17 @@ if __name__ == "__main__":
     # get list of predicted labels probabilities
     pred_probs = predict_probs('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
     
-    print(calc_precision_recall_f1(test_labels, pred_labels))
+ #   print(calc_precision_recall_f1(test_labels, pred_labels))
     lr_probs = np.array(pred_probs, dtype=float)
-    '''
+
+  #  print(lr_probs)
+    
     # hardcoded for calcualting ROC and AUC
     roc_point = roc_auc_calc(test_y, lr_probs)
     # plot ROC curve
     plot_roc(roc_point)
 
+    '''
     # plot precision and recall curve
     precisio_recall_plot(test_y, pred_probs)
     
