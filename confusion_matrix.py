@@ -47,45 +47,6 @@ def parse_labels(testfile):
 
     return test_lables
 
-# Function to calculate Precision and Recall.
-# Source: https://medium.com/@douglaspsteen/precision-recall-curves-d32e5b290248
-def calc_precision_recall(y_true, y_pred):
-    
-    # Convert predictions to series with index matching y_true
-   # y_pred = pd.Series(y_pred, index=y_true.index)
-    
-    # Instantiate counters
-    TP = 0
-    FP = 0
-    FN = 0
-
-    # Determine whether each prediction is TP, FP, TN, or FN
-    for i in range(len(y_true)): 
-        print("Predicted label:",y_pred[i], "True label: "+y_true[i])
-        if (y_true[i]==y_pred[i]=='__label__sec')or (y_true[i]==y_pred[i]=='__label__nonsec'):
-           TP += 1
-        if (y_pred[i]=='__label__nonsec') and (y_true[i]!=y_pred[i]):
-           FP += 1
-        if (y_pred[i]=='__label__sec') and (y_true[i]!=y_pred[i]):
-           FN += 1
-    
-    
-    # Calculate true positive rate and false positive rate
-    # Use try-except statements to avoid problem of dividing by 0
-    try:
-        precision = TP / (TP + FP)
-    except:
-        precision = 1
-    
-    try:
-        recall = TP / (TP + FN)
-    except:
-        recall = 1
-    
-    f1_score = (2*precision * recall) / \
-            (precision + recall)
-
-    return precision, recall
 def conv_to_numric(actual_labels):
     numric_labels = []
     for i in range(0, len(actual_labels)):
@@ -185,7 +146,7 @@ def testPR(test,pred):
     print("Recall: ", recall)
     print("Precision: ", precision)
     print("F1: ", f1_score)   
-     
+
 if __name__ == "__main__":
 
     # get list of labeles to be tested 
