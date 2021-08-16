@@ -2,6 +2,8 @@ import argparse
 import numpy as np
 import pandas as pd
 
+from utilities import calc_precision_recall_f1
+
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay, confusion_matrix
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_recall_curve
@@ -180,8 +182,9 @@ if __name__ == "__main__":
     # get list of predicted labels probabilities
     pred_probs = predict_probs('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
     
+    print(calc_precision_recall_f1(test_labels, pred_labels))
     lr_probs = np.array(pred_probs, dtype=float)
-
+    '''
     # hardcoded for calcualting ROC and AUC
     roc_point = roc_auc_calc(test_y, lr_probs)
     # plot ROC curve
@@ -192,7 +195,7 @@ if __name__ == "__main__":
     
     # keep probabilities for the positive outcome only 
     #lr_probs = lr_probs[:, 1]
-    '''
+    
     # calculate scores
     ns_auc = roc_auc_score(test_y, ns_probs)
     lr_auc = roc_auc_score(test_y, lr_probs)
