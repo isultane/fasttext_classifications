@@ -43,6 +43,7 @@ targets = encoder.fit_transform(trainDF['label'])
 
 # split into train/test sets
 trainX, testX, trainy, testy = train_test_split(matrix, targets, test_size=0.2, random_state=2)
+
 # generate a no skill prediction (majority class)
 ns_probs = [0 for _ in range(len(testy))]
 # load model
