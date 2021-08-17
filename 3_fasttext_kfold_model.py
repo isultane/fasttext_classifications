@@ -106,7 +106,7 @@ class fasttextModel(object):
                                     test_labels = parse_labels(test_fold)
                                     pred_labels = predict_labels(test_fold, model)
                                     precision_score, recall_socre, f1_score = calc_precision_recall_f1(test_labels, pred_labels)
-                                    print("P: ",precision_score , " R: ",recall_socre," F1: ",f1_score)
+                                    print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score)
 
                                     # select best values fold
                                     if f1_score > best_results["f_score"]:
