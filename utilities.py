@@ -102,8 +102,9 @@ def calc_precision_recall_f1(y_true, y_pred):
     
     # Calculate true positive rate and false positive rate
     # Use try-except statements to avoid problem of dividing by 0
-    precision = TP / (TP + FP)
-    recall = TP / (TP + FN)
+    precision = TP / (TP + FP) # this line cause exception devided by zero. 
+    recall = TP / (TP + FN) # this line cause exception devided by zero. 
     f1_score = (2*precision * recall) / (precision + recall)
+    
 
     return precision, recall, f1_score
