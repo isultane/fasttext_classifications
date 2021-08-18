@@ -97,28 +97,23 @@ def calc_precision_recall_f1(y_true, y_pred):
            FN +=1
         elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__sec':
            FP += 1
-        elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__sec':
+        elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__nonsec':
            TN += 1
-    
+    print(TP, FN, FP, TN)
     # Calculate true positive rate and false positive rate
-    # Use try-except statements to avoid problem of dividing by 0. For this speial case, we have defined
+    # Use if-else statements to avoid problem of dividing by 0. For this speial case, we have defined
     # if the TP, FP, and FN are all Zero, the precision, recall and F1 are One. This migh occure in case
-    # in which the kfold contains doc without __label__sec labels and the model correctly returns __label__sec (TN).
+    # in which the kfold contains doc without __label__sec labels and the model correctly returns __label__nonsec (TN).
     # Reference: https://stats.stackexchange.com/questions/8025/what-are-correct-values-for-precision-and-recall-when-the-denominators-equal-0
-    try:
+    if TP == 0 and FP == 0:
+      precision = 1
+    else:
       precision = TP / (TP + FP) 
-    except:
-      if TP == 0 and FP == 0 and TN > 0:
-        precision = 1
-      else:
-        precision = 0 
-    try:
+
+    if TP == 0 and FN == 0:
+      recall = 1
+    else:
       recall = TP / (TP + FN)
-    except:
-      if TP == 0 and FN == 0 and TN > 0:
-        recall = 1
-      else:
-        recall = 0
     
     try:
       f1_score = (2*precision * recall) / (precision + recall)
