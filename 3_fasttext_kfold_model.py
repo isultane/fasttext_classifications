@@ -32,7 +32,7 @@ We have two sources of the datasets to be fed in fasttext model:
  2- vulnerabilities reports datasets
 '''
 bugreports_source_dataset = glob.glob(
-    "./data/test/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
+    "./data/bug_reports/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
 vulnerabilities_source_dataset = glob.glob(
     "./data/vulnerabilities_reports/*.txt")  # source datasets path (vuln. reports after extracted in fasttext format)
 
@@ -43,10 +43,10 @@ class fasttextModel(object):
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
             # save training data
-            with open("./data/test/"+training_path, 'w') as trainFile:
+            with open("./data/bug_reports/"+training_path, 'w') as trainFile:
                 trainFile.writelines(x_train)
             # save testing data
-            with open("./data/test/"+testing_path, 'w') as testFile:
+            with open("./data/bug_reports/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
 
     # this code for testing the approach of k-fold validation
@@ -120,7 +120,17 @@ class fasttextModel(object):
                                         }
 
                                         best_results = model_results
+                                    elif best_results["model"] == None:
+                                        model_results = {
+                                            "conf": conf,
+                                            "model": model,
+                                            "f_score": f1_score,
+                                            "p_score": precision_score,
+                                            "r_score": recall_socre,
+                                            "kfold_counter": fold_counter
+                                        }
 
+                                        best_results = model_results
                                 except Exception as e:
                                     print(
                                         f"Error for fold={fold_counter} and conf {conf}: {e}")
@@ -177,7 +187,7 @@ if __name__ == '__main__':
             project_data, training_file, testing_file)
         # read the pre-processed dataset into dataframe - TBC
 
-        df = read_training_data("./data/test/"+training_file)
+        df = read_training_data("./data/bug_reports/"+training_file)
       # df = read_training_data("./data/vulnerabilities_reports/"+training_file)
 
 

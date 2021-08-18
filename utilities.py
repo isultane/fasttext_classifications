@@ -99,7 +99,7 @@ def calc_precision_recall_f1(y_true, y_pred):
            FP += 1
         elif y_true[i]=='__label__nonsec' and y_pred[i]=='__label__nonsec':
            TN += 1
-    print(TP, FN, FP, TN)
+    
     # Calculate true positive rate and false positive rate
     # Use if-else statements to avoid problem of dividing by 0. For this speial case, we have defined
     # if the TP, FP, and FN are all Zero, the precision, recall and F1 are One. This migh occure in case
