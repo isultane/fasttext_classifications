@@ -11,7 +11,8 @@ from utilities import get_keywords
 filenames = glob.glob("/home/sultan/Downloads/sbrbench-master/Clean_sbr_datasets/*.csv")
 
 # saving the pre-processed bug reports
-save_path = './data/bug_reports/'
+#save_path = './data/bug_reports/'
+save_path = './data/test/'
 
 # reading bug reports from csv files.
 # the fuction is preprocessing projects Ambari, Camel, Derby, and Wicket into fasttext format
@@ -37,7 +38,8 @@ def readCSVfiles(file_):
             else:
                 row[26] = '__label__nonsec'
             # pre-processing the input file (tokanizing, stop words, etc.)
-            row_preprocessed = get_keywords(row[13] + row[14])
+          #  row_preprocessed = get_keywords(row[13] + row[14])
+            row_preprocessed = row[13] + row[14]
 
             # wrting to the output file
             file_1.write(f'{row[26]} {row_preprocessed} \n') 

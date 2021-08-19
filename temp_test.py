@@ -1,76 +1,51 @@
+import string
 import fasttext
 import re
 import pandas as pd
+from yaml import tokens
+from nltk.tokenize import word_tokenize
 
-from sklearn.metrics import roc_curve
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import precision_recall_curve
-from sklearn.metrics import f1_score
-from sklearn.metrics import auc
-from matplotlib import pyplot
-from sklearn.model_selection import train_test_split
+# Returns a list of common english terms (words)
+def initialize_words():
+    content = None
+    with open('/home/sultan/Downloads/wordlist.txt') as f: # A file containing common english words
+        content = f.readlines()
+    return [word.rstrip('\n') for word in content]
 
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.preprocessing import LabelEncoder
+def parse_sentence(sentence, wordlist):
+    new_sentence = "" # output    
+    tokens = word_tokenize(sentence)
+    # convert to lower cases
+    tokens = [w.lower() for w in tokens]
+    # prepare regex for char filtering
+    re_punc = re.compile('[%s]' % re.escape(string.punctuation))
+    # remove punctuation from each word
+    tokens = [re_punc.sub(' ', w) for w in tokens]
+    for term in tokens:
+        new_sentence += parse_terms(term, wordlist)
+        new_sentence += " "
 
+    return new_sentence 
 
+def parse_terms(term, wordlist):
+    words = []
+    word = find_word(term, wordlist)    
+    while word != None and len(term) > 0:
+        words.append(word)            
+        if len(term) == len(word): # Special case for when eating rest of word
+            break
+        term = term[len(word):]
+        word = find_word(term, wordlist)
+    return " ".join(words)
 
-def split_df(data):
-    count_vect = CountVectorizer()
-    print('Loading data ...')
-    labels, texts = ([], [])
-    for line in data:
-        label, text = line.split(' ', 1)
-        labels.append(label)
-        texts.append(text)
+def find_word(token, wordlist):
+    i = len(token) + 1
+    while i > 1:
+        i -= 1
+        if token[:i] in wordlist:
+            return token[:i]
+    return None 
 
-    trainDF = pd.DataFrame()
-    trainDF['label'] = labels
-    trainDF['text'] = texts
-
-    # to fit the text in the dataframe
-    # You have to do some encoding before using fit. As it known fit() does not accept Strings.
-    count_vect = CountVectorizer()
-    matrix = count_vect.fit_transform(trainDF['text'])
-    encoder = LabelEncoder()
-    targets = encoder.fit_transform(trainDF['label'])
-
-    # split into train/test sets
-    trainX, testX, trainy, testy = train_test_split(
-        matrix, targets, test_size=0.2)
-
-    return trainX, testX, trainy, testy
-def extract_P_R_F1(self, N, p, r):
-        precision_score = p
-        recall_socre = r
-        f1_score = (2*precision_score * recall_socre) / \
-            (precision_score + recall_socre)
-
-        print("[ N records:", N, " P: ", precision_score,
-              "R: ", recall_socre, "F1: ", f1_score, "]")
- 
-
-#test_sentences = open('ambari.valid').readlines()
-model = fasttext.load_model("model_ambari.bin")
-
-print(model.test('ambari.valid'))
-print(model.test_label('ambari.valid'))
-'''
-
-trainX, testX, trainy, testy = split_df(test_sentences)
-
-
-# label the data
-labels, probabilities = model.predict([re.sub('\n', ' ', sentence) 
-                                                     for sentence in test_sentences])
-auc = roc_auc_score(testy, probabilities)
-print('ROC AUC=%.3f' % (auc))
-
-# convert fasttext multilabel results to a binary classifier (probability of TRUE)
-labels = list(map(lambda x: x == ['__label__nonsec-report'] or x == ['__label__sec-report'], labels))
-probabilities = [probability[0] if label else (1-probability[0]) 
-                 for label, probability in zip(labels, probabilities)]
-
-auc = roc_auc_score(testy, probabilities)
-print('ROC AUC=%.3f' % (auc))
-'''
+wordlist = initialize_words()
+sentence = "NullPointerException after deserialize wicket.util.concurrent.CopyOnWriteArrayListwicket.feedback.FeedbackMessages by default using wicket.util.concurrent.CopyOnWriteArrayList for storage. however CopyOnWriteArrayList internally use a transient Object[] array_ without checking null and lazy initialization. This may cause NullPointerException after session replication or the like. Below is stack trace while testing terracotta session clustering :WicketMessage: unable to get object  model: Model:classname=&#91;wicket.feedback.FeedbackMessagesModel&#93;:attached=true  called with component [MarkupContainer &#91;Component id = messages  page = ngc.wicket.pages.MainPage   path = 7:globalFeedback:feedbackul:messages.FeedbackPanel$MessageListView  isVisible = true  isVersioned = false&#93;]Root cause:java.lang.NullPointerExceptionat wicket.util.concurrent.CopyOnWriteArrayList.size (CopyOnWriteArrayList.java:152)at wicket.feedback.FeedbackMessages.messages(FeedbackMessages.java:258)at wicket.feedback.FeedbackMessagesModel.onGetObject(FeedbackMessagesModel.java:101)at wicket.model.AbstractDetachableModel.getObject (AbstractDetachableModel.java:104)at wicket.Component.getModelObject(Component.java:990)at wicket.markup.html.panel.FeedbackPanel.updateFeedback(FeedbackPanel.java:234)at wicket.Page$2.component (Page.java:372)at wicket.MarkupContainer.visitChildren(MarkupContainer.java:744)at wicket.Page.renderPage(Page.java:368)"
+print(parse_sentence(sentence, wordlist))
