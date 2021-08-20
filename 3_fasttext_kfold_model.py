@@ -11,7 +11,6 @@ import re
 import csv
 import glob
 
-from utilities import get_keywords
 from utilities import read_training_data
 from utilities import parse_labels
 from utilities import predict_labels
@@ -59,16 +58,16 @@ class fasttextModel(object):
         # split the dataset into k folds
         kf = KFold(n_splits=k, shuffle=True)
         fold_counter = 0
-        best_results = {
-            "conf": None,
-            "model": None,
-            "f_score": 0.0,
-            "p_score": 0.0,
-            "r_score": 0.0,
-            "kfold_counter": 0
-        }
         # for each fold
         for train_index, test_index in kf.split(df['label'], df['text']):
+            best_results = {
+                "conf": None,
+                "model": None,
+                "f_score": 0.0,
+                "p_score": 0.0,
+                "r_score": 0.0,
+                "kfold_counter": 0
+            }
             fold_counter += 1
             print("Processing fold: ", fold_counter)
             train_fold = './data/kfold_train_test_data/ft_k' + \

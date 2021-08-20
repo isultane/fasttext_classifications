@@ -64,7 +64,7 @@ def read_training_data(training_dataset):
     for line in data:
         label, text = line.split(' ', 1)
         text = text.strip('\n')
-        text = get_keywords(text) # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
+   #     text = get_keywords(text) # this text might need more pre-processing, tokanizing, stemming, keywords, etc. 
         labels.append(label)
         texts.append(text)
 
