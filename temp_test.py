@@ -2,7 +2,6 @@ import string
 import fasttext
 import re
 import pandas as pd
-from utilities import get_keywords
 from yaml import tokens
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -16,8 +15,9 @@ def initialize_words():
     return [word.rstrip('\n') for word in content]
 
 def parse_sentence(sentence, wordlist):
-    new_sentence = "" # output    
-    tokens = word_tokenize(sentence)
+    new_sentence = "" # output  
+    tokens = re.findall(r'\w+\b', sentence)
+ #   tokens = word_tokenize(sentence)
     # convert to lower cases
     tokens = [w.lower() for w in tokens]
     # prepare regex for char filtering
@@ -35,8 +35,8 @@ def parse_sentence(sentence, wordlist):
 
 def parse_terms(term, wordlist):
     words = []
-    word = find_word(term, wordlist)    
-    while word != None and len(term) > 0:
+    word = find_word(term, wordlist)  
+    while word != None and len(word) > 2:
         words.append(word)            
         if len(term) == len(word): # Special case for when eating rest of word
             break
@@ -53,7 +53,7 @@ def find_word(token, wordlist):
     return None 
 
 wordlist = initialize_words()
-sentence = "NullPointerException after deserialize wicket.util.concurrent.CopyOnWriteArrayListwicket.feedback.FeedbackMessages by default using wicket.util.concurrent.CopyOnWriteArrayList for storage. however CopyOnWriteArrayList internally use a transient Object[] array_ without checking null and lazy initialization. This may cause NullPointerException after session replication or the like. Below is stack trace while testing terracotta session clustering :WicketMessage: unable to get object  model: Model:classname=&#91;wicket.feedback.FeedbackMessagesModel&#93;:attached=true  called with component [MarkupContainer &#91;Component id = messages  page = ngc.wicket.pages.MainPage   path = 7:globalFeedback:feedbackul:messages.FeedbackPanel$MessageListView  isVisible = true  isVersioned = false&#93;]Root cause:java.lang.NullPointerExceptionat wicket.util.concurrent.CopyOnWriteArrayList.size (CopyOnWriteArrayList.java:152)at wicket.feedback.FeedbackMessages.messages(FeedbackMessages.java:258)at wicket.feedback.FeedbackMessagesModel.onGetObject(FeedbackMessagesModel.java:101)at wicket.model.AbstractDetachableModel.getObject (AbstractDetachableModel.java:104)at wicket.Component.getModelObject(Component.java:990)at wicket.markup.html.panel.FeedbackPanel.updateFeedback(FeedbackPanel.java:234)at wicket.Page$2.component (Page.java:372)at wicket.MarkupContainer.visitChildren(MarkupContainer.java:744)at wicket.Page.renderPage(Page.java:368)"
+sentence = "Support case insensitive mount pathshttp://www.nabble.com/Non-case-sensitive-nice-URL-tf2643746.htmlI use nice URL to mount some page in the usual way :mountBookmarkablePage('/Organization'  Organization.class);That is great  but it will make an error if a user enter the url by hand and decide to not use case sensitive. I mean  I can mount organization without the capital letter  but it would make the same error if the user use Capital after that.Is there a way of using Nice URL that is not case sensitive?ThanksMarc"
 print(parse_sentence(sentence, wordlist))
 
 

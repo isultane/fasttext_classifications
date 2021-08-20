@@ -12,28 +12,50 @@ from nltk.tokenize import word_tokenize
 #nltk.download('stopwords') # it is used at the first time to download stopwords list
 #nltk.download('punkt')
 
-def get_keywords(row):     
-    # split into tokens by white space
-    # tokens = [x.strip() for x in row.split()]
-      tokens = word_tokenize(row)
-    # convert to lower cases
-      tokens = [w.lower() for w in tokens]
-    # prepare regex for char filtering
-      re_punc = re.compile('[%s]' % re.escape(string.punctuation))
-    # remove punctuation from each word
-      tokens = [re_punc.sub(' ', w) for w in tokens]
-    # remove remaining tokens that are not alphabetic
-      tokens = [word for word in tokens if word.isalpha()]
-    # filter out stop words
-      stop_words = set(stopwords.words('english'))
-      tokens = [w for w in tokens if w not in stop_words]
-    # stemming of words
-    # porter = PorterStemmer()
-    # stemmed = [porter.stem(word) for word in tokens]
-    # filter out short tokens
-    #  tokens = [word for word in tokens if len(word) > 2]
-      return ' '.join(tokens).strip()
+# Returns a list of common english terms (words)
+def initialize_words():
+    content = None
+    with open('/home/sultan/Downloads/wordlist.txt') as f: # A file containing common english words
+        content = f.readlines()
+    return [word.rstrip('\n') for word in content]
 
+def parse_sentence(sentence, wordlist):
+    new_sentence = "" # output  
+    tokens = re.findall(r'\w+\b', sentence)
+ #   tokens = word_tokenize(sentence)
+    # convert to lower cases
+    tokens = [w.lower() for w in tokens]
+    # prepare regex for char filtering
+    re_punc = re.compile('[%s]' % re.escape(string.punctuation))
+    # remove punctuation from each word
+    tokens = [re_punc.sub(' ', w) for w in tokens]
+    # filter out stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [w for w in tokens if w not in stop_words]
+    for term in tokens:
+        new_sentence += parse_terms(term, wordlist)
+        new_sentence += " "
+
+    return " ".join(new_sentence.split())
+
+def parse_terms(term, wordlist):
+    words = []
+    word = find_word(term, wordlist)  
+    while word != None and len(word) > 2:
+        words.append(word)            
+        if len(term) == len(word): # Special case for when eating rest of word
+            break
+        term = term[len(word):]
+        word = find_word(term, wordlist)
+    return " ".join(words)
+
+def find_word(token, wordlist):
+    i = len(token) + 1
+    while i > 1:
+        i -= 1
+        if token[:i] in wordlist:
+            return token[:i]
+    return None 
 
 # read fasttext fromat into dataframe.
 def read_training_data(training_dataset):
