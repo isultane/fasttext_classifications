@@ -37,7 +37,7 @@ def parse_sentence(sentence, wordlist):
         new_sentence += " "
 
     return " ".join(new_sentence.split())
-
+# source : https://stackoverflow.com/questions/20516100/term-split-by-hashtag-of-multiple-words
 def parse_terms(term, wordlist):
     words = []
     word = find_word(term, wordlist)  
@@ -48,7 +48,7 @@ def parse_terms(term, wordlist):
         term = term[len(word):]
         word = find_word(term, wordlist)
     return " ".join(words)
-
+# source: https://stackoverflow.com/questions/20516100/term-split-by-hashtag-of-multiple-words
 def find_word(token, wordlist):
     i = len(token) + 1
     while i > 1:
