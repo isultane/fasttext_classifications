@@ -1,6 +1,6 @@
-# The surce code originally modified from https://realpython.com/
 # Author: Sultan S. Alqahtani
 # Date: 06/16/2021 
+# some parts taken from this reference: https://realpython.com/
 import csv
 import os
 import glob
