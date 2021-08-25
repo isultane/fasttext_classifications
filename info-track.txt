@@ -16,3 +16,9 @@ model = fasttext.load_model("model_ambari.bin") (working good)
     3- https://vitalflux.com/micro-average-macro-average-scoring-metrics-multi-class-classification-python/
 - [Fixed!] Precision and Recall cause problem in wicket project (devided by zero). Discussed here: https://stats.stackexchange.com/questions/8025/what-are-correct-values-for-precision-and-recall-when-the-denominators-equal-0 
 - [Underprocess] writing the paper - Abstract, introduction, related worrk, method, and results.
+    1- Abstract [done- need review]
+    2- introduction [Underprocess]
+    3- related work and background [Underprocess]
+    4- propoed approach [Underprocess]
+    5- evaluation [Underprocess]
+    6- conclusion and future work [Underprocess]
