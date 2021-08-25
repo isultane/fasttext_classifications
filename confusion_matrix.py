@@ -166,13 +166,13 @@ if __name__ == "__main__":
     lr_probs = np.array(pred_probs, dtype=float)
     testPR (test_labels, pred_labels)
 
-    '''    
+    
     # hardcoded for calcualting ROC and AUC
-    #roc_point = roc_auc_calc(test_y, lr_probs)
+    roc_point = roc_auc_calc(test_y, lr_probs)
     # plot ROC curve
-    #plot_roc(roc_point)
+    plot_roc(roc_point)
 
-  
+    '''
     # plot precision and recall curve
     precisio_recall_plot(test_y, pred_probs)
     
