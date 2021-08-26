@@ -3,7 +3,6 @@
 - [Underprocess] fasttext molde used to tagging the security reports with multiple labels 
 - [Underprocess] Calcluate ROC and AUC 
     - ROC curves are appropriate when the observations are balanced between each class, whereas precision-recall curves are appropriate for imbalanced datasets.
-- [Not schedule] writing the methodology section 
 - [Done!] on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
 model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
