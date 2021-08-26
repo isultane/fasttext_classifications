@@ -114,48 +114,13 @@ def plot_roc(roc_point):
 
     print("AUC score: ", auc)
 
-def precisio_recall_plot(test_y, pred_probs):
-    precision_values, recall_values, _ = precision_recall_curve(test_y, np.array(pred_probs, dtype=float))
-    # plot the precision-recall curves
-    pyplot.plot(recall_values, precision_values, marker='.', label='Precision,Recall')
-    # axis labels
-    pyplot.xlabel('Recall')
-    pyplot.ylabel('Precision')
-    # show the legend
-    pyplot.legend()
-    # show the plot
-    pyplot.show()
-
-def testPR(test,pred):
-    # Determine whether each prediction is TP, FP, TN, or FN
-    TP=0; FP=0; FN=0; TN=0
-
-    for i in range(len(test)): 
-        if test[i]=='__label__sec' and pred[i]=='__label__sec':
-           TP += 1
-        elif test[i]=='__label__sec' and pred[i]=='__label__nonsec':
-           FN +=1
-        elif test[i]=='__label__nonsec' and pred[i]=='__label__sec':
-           FP += 1
-        elif test[i]=='__label__nonsec' and pred[i]=='__label__nonsec':
-           TN += 1
-    recall = TP / (TP + FN)
-    precision = TP / (TP + FP)
-    f1_score = (2*precision * recall) / (precision + recall)
-
-    print("Recall: ", recall)
-    print("Precision: ", precision)
-    print("F1: ", f1_score)   
-
 if __name__ == "__main__":
-
+# this code need to be modifed to include all the results of the projects. The best results.
     # get list of labeles to be tested 
     test_labels = parse_labels('./data/bug_reports/Chromium.valid')
-    # convert the labels inro nummric - security is ONE and non security is ZERO
+    # convert the labels inro nummric - security is ONE and non-security is ZERO
     test_y = conv_to_numric(test_labels)
 
-    # generate a no skill prediction (majority class)
-    ns_probs = [0 for _ in range(len(test_y))]
 
     # get list of predicted labels - security or non security
     pred_labels = predict_labels('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
@@ -164,7 +129,6 @@ if __name__ == "__main__":
     
  #   print(calc_precision_recall_f1(test_labels, pred_labels))
     lr_probs = np.array(pred_probs, dtype=float)
-    testPR (test_labels, pred_labels)
 
     
     # hardcoded for calcualting ROC and AUC
@@ -202,8 +166,6 @@ if __name__ == "__main__":
     pyplot.show()
     
     
-    # hard coded P and R
-    #print(calc_precision_recall(test_labels, pred_labels))
     
     
     
