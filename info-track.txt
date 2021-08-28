@@ -2,7 +2,7 @@
 - [Done!] fasttext model used to classifiy bug reports (security and non-security labels) 
 - [Underprocess] fasttext molde used to tagging the security reports with multiple labels 
 - [Underprocess] Calcluate ROC and AUC 
-    - ROC curves are appropriate when the observations are balanced between each class, whereas precision-recall curves are appropriate for imbalanced datasets.
+- [Not schedule] writing the methodology section 
 - [Done!] on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
 model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
@@ -16,9 +16,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
     3- https://vitalflux.com/micro-average-macro-average-scoring-metrics-multi-class-classification-python/
 - [Fixed!] Precision and Recall cause problem in wicket project (devided by zero). Discussed here: https://stats.stackexchange.com/questions/8025/what-are-correct-values-for-precision-and-recall-when-the-denominators-equal-0 
 - [Underprocess] writing the paper - Abstract, introduction, related worrk, method, and results.
-    1- Abstract [done- need review]
-    2- introduction [Underprocess]
-    3- related work and background [Underprocess]
-    4- propoed approach [Underprocess]
-    5- evaluation [Underprocess]
-    6- conclusion and future work [Underprocess]
+- [Underprocess] add more evaluation matrics - g measure, pd and pf 
