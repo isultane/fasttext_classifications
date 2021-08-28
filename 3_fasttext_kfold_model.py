@@ -186,7 +186,6 @@ if __name__ == '__main__':
         testing_file = project_name.split('.')[0]
         testing_file = testing_file + '.valid'
         print(testing_file)
-
         # split the data set into training and validating sets
         fasttext_model_object.split_train_test(
             project_data, training_file, testing_file)
