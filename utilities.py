@@ -145,7 +145,7 @@ def calc_precision_recall_f1(y_true, y_pred):
     
     try:
       f1_score = (2*precision * recall) / (precision + recall)
-      g_score = (2*recall*(100-pf))/(recall + (100-pf))
+      g_score = (2*recall*(1-pf))/(recall + (1-pf))
     except:
       if precision == 0 or recall == 0:
         f1_score = 0
