@@ -14,6 +14,14 @@ import matplotlib.pyplot as pyplot
 
 import fasttext
 import re
+import glob
+import os
+
+# declaration of data sources paths
+validation_dataset = glob.glob("path to  *.valid")
+models_files = glob.glob("path to *.bin")
+
+
 
 def predict_probs(testfile, model):
     # Return predictions probabilities
@@ -115,26 +123,33 @@ def plot_roc(roc_point):
     print("AUC score: ", auc)
 
 if __name__ == "__main__":
-# this code need to be modifed to include all the results of the projects. The best results.
-    # get list of labeles to be tested 
-    test_labels = parse_labels('./data/bug_reports/Chromium.valid')
-    # convert the labels inro nummric - security is ONE and non-security is ZERO
-    test_y = conv_to_numric(test_labels)
 
+    # define list to plot ROC for all projects
+    roc_point = []
+    # read *.valid data to extract test labels
+    for (fl, ml) in zip(validation_dataset, models_files):
+        file_name = os.path.basename(fl)
+        print("Reading file: " + file_name)
+        # get list of labeles to be tested 
+        test_labels = parse_labels(fl)
+        # convert the labels inro nummric - security is ONE and non-security is ZERO
+        test_y = conv_to_numric(test_labels)
 
-    # get list of predicted labels - security or non security
-    pred_labels = predict_labels('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
-    # get list of predicted labels probabilities
-    pred_probs = predict_probs('./data/bug_reports/Chromium.valid', model=fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin"))
+        # get list of predicted labels - security or non security
+        pred_labels = predict_labels(fl, model=fasttext.load_model(ml))
+        # get list of predicted labels probabilities
+        pred_probs = predict_probs(fl, model=fasttext.load_model(ml))
     
- #   print(calc_precision_recall_f1(test_labels, pred_labels))
-    lr_probs = np.array(pred_probs, dtype=float)
+        print(calc_precision_recall_f1(test_labels, pred_labels))
+        lr_probs = np.array(pred_probs, dtype=float)
 
-    
-    # hardcoded for calcualting ROC and AUC
-    roc_point = roc_auc_calc(test_y, lr_probs)
-    # plot ROC curve
-    plot_roc(roc_point)
+        roc_point.append(roc_auc_calc(test_y, lr_probs))
+
+    for pl in roc_point:
+        # hardcoded for calcualting ROC and AUC
+        #roc_point = roc_auc_calc(test_y, lr_probs)
+        # plot ROC curve
+        plot_roc(roc_point)
 
     '''
     # plot precision and recall curve
