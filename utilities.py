@@ -137,13 +137,22 @@ def calc_precision_recall_f1(y_true, y_pred):
     else:
       recall = TP / (TP + FN)
     
+    # We report probability of false alarm (pf) as follow:
+    if FP == 0 and TN == 0:
+        pf = 1
+    else:
+        pf = FP / (FP + TN)
+    
     try:
       f1_score = (2*precision * recall) / (precision + recall)
+      g_score = (2*recall*(100-pf))/(recall + (100-pf))
     except:
       if precision == 0 or recall == 0:
         f1_score = 0
+        g_score = 0
       else:
         f1_score = 1
+        g_score = 1
     
-
-    return precision, recall, f1_score
+    
+    return precision, recall, f1_score, pf, g_score

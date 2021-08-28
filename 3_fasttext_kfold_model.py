@@ -66,6 +66,8 @@ class fasttextModel(object):
                 "f_score": 0.0,
                 "p_score": 0.0,
                 "r_score": 0.0,
+                "g_score":0.0,
+                "pf_score":0.0,
                 "kfold_counter": 0
             }
             fold_counter += 1
@@ -104,8 +106,8 @@ class fasttextModel(object):
 
                                     test_labels = parse_labels(test_fold)
                                     pred_labels = predict_labels(test_fold, model)
-                                    precision_score, recall_socre, f1_score = calc_precision_recall_f1(test_labels, pred_labels)
-                                    print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score)
+                                    precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
+                                    print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
                                     # select best values fold
                                     if f1_score > best_results["f_score"]:
@@ -115,6 +117,8 @@ class fasttextModel(object):
                                             "f_score": f1_score,
                                             "p_score": precision_score,
                                             "r_score": recall_socre,
+                                            "g_score":g_score,
+                                            "pf_score":pf,
                                             "kfold_counter": fold_counter
                                         }
 
@@ -126,6 +130,8 @@ class fasttextModel(object):
                                             "f_score": f1_score,
                                             "p_score": precision_score,
                                             "r_score": recall_socre,
+                                            "g_score":g_score,
+                                            "pf_score":pf,
                                             "kfold_counter": fold_counter
                                         }
 
@@ -158,7 +164,7 @@ class fasttextModel(object):
         with open('./data/best_kfold_models/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
-                            kfold_results["p_score"], kfold_results["r_score"], kfold_results["kfold_counter"], pname])
+                            kfold_results["p_score"], kfold_results["r_score"],kfold_results["g_score"],kfold_results["pf_score"], kfold_results["kfold_counter"], pname])
 
 if __name__ == '__main__':
     fasttext_model_object = fasttextModel()
