@@ -18,3 +18,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [Underprocess] writing the paper - Abstract, introduction, related worrk, method, and results.
 - [Done!] add more evaluation matrics - g measure, pd and pf 
 - [Done!] updated all evalauations for all tested projects
+- [Done!] rerun the expermint on wicket project for validation test
