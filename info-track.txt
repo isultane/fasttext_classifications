@@ -20,3 +20,5 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] updated all evalauations for all tested projects
 - [Done!] rerun the expermint on wicket project for validation test
 - [Underprocess] Related work and background section
+
+- [under plan] cybersecurity concepts labels - fasttext with node.js: https://www.youtube.com/watch?v=-s5QVigBTEo
