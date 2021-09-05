@@ -18,8 +18,8 @@ import glob
 import os
 
 # declaration of data sources paths
-validation_dataset = glob.glob("path to  *.valid")
-models_files = glob.glob("path to *.bin")
+validation_dataset = glob.glob("./data/bug_reports/*.valid")
+models_files = glob.glob("./data/best_kfold_models/*.bin")
 
 
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         # hardcoded for calcualting ROC and AUC
         #roc_point = roc_auc_calc(test_y, lr_probs)
         # plot ROC curve
-        plot_roc(roc_point)
+        plot_roc(pl)
 
     '''
     # plot precision and recall curve
