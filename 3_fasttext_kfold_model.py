@@ -37,7 +37,7 @@ vulnerabilities_source_dataset = glob.glob(
 
 class fasttextModel(object):
     def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.2):
-        # split dataset into train and test, then save them
+        # split dataset into train and test, then save them (training 80% and testing 20%)
         with open(datasetFile, "r") as reader:
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
