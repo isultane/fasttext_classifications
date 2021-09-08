@@ -15,7 +15,7 @@ model = fasttext.load_model("model_ambari.bin") (working good)
     2- https://stackoverflow.com/questions/34698161/how-to-interpret-almost-perfect-accuracy-and-auc-roc-but-zero-f1-score-precisio 
     3- https://vitalflux.com/micro-average-macro-average-scoring-metrics-multi-class-classification-python/
 - [Fixed!] Precision and Recall cause problem in wicket project (devided by zero). Discussed here: https://stats.stackexchange.com/questions/8025/what-are-correct-values-for-precision-and-recall-when-the-denominators-equal-0 
-- [Underprocess] writing the paper - Abstract, introduction, related worrk, method, and results.
+- [Underprocess] writing the paper - Abstract [done!], introduction, related worrk[done!], method, and results.
 - [Done!] add more evaluation matrics - g measure, pd and pf 
 - [Done!] updated all evalauations for all tested projects
 - [Done!] rerun the expermint on wicket project for validation test
