@@ -1,15 +1,23 @@
-import fasttext
+#!/usr/local/bin/python3
+# @author cpuhrsch https://github.com/cpuhrsch
+# @author Loreto Parisi loreto@musixmatch.com
 
-#model = fasttext.train_supervised(input="ambari.valid")
-model = fasttext.load_model("./data/best_kfold_models/best_k5_Chromium_model.bin")
+import argparse
+import numpy as np
+from sklearn.metrics import confusion_matrix
 
-'''
-print(model.predict("access control  security report"))
-print(model.predict("sql injection security report"))
-
-print(model.predict("xss security report"))
-'''
-print(model.test("./data/bug_reports/Chromium.valid"))
+def parse_labels(path):
+    with open(path, 'r') as f:
+        return np.array(list(map(lambda x: x[9:], f.read().split())))
 
 
-#print(model.test_label("./data/bug_reports/Chromium.valid"))
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Display confusion matrix.')
+    parser.add_argument('test', help='Path to test labels')
+    parser.add_argument('predict', help='Path to predictions')
+    args = parser.parse_args()
+    test_labels = parse_labels(args.test)
+    pred_labels = parse_labels(args.predict)
+    eq = test_labels == pred_labels
+    print("Accuracy: " + str(eq.sum() / len(test_labels)))
+    print(confusion_matrix(test_labels, pred_labels))
