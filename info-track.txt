@@ -1,8 +1,7 @@
 - [Fixed!] fixing issue: FastText recall is 'nan' but precision is a number. And the soltuion is pip3 install git+https://github.com/facebookresearch/fastText.git@b64e359d5485dda4b4b5074494155d18e25c8d13 
 - [Done!] fasttext model used to classifiy bug reports (security and non-security labels) 
-- [Underprocess] fasttext molde used to tagging the security reports with multiple labels 
-- [Underprocess] Calcluate ROC and AUC 
-- [Not schedule] writing the methodology section 
+- [Done!] Calcluate ROC and AUC 
+- [Underprocess] writing the methodology section 
 - [Done!] on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
 model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
@@ -15,7 +14,7 @@ model = fasttext.load_model("model_ambari.bin") (working good)
     2- https://stackoverflow.com/questions/34698161/how-to-interpret-almost-perfect-accuracy-and-auc-roc-but-zero-f1-score-precisio 
     3- https://vitalflux.com/micro-average-macro-average-scoring-metrics-multi-class-classification-python/
 - [Fixed!] Precision and Recall cause problem in wicket project (devided by zero). Discussed here: https://stats.stackexchange.com/questions/8025/what-are-correct-values-for-precision-and-recall-when-the-denominators-equal-0 
-- [Underprocess] writing the paper - Abstract [done!], introduction, related worrk[done!], method, and results.
+- [Done!] writing the paper - Abstract [done!], introduction [done!]. 
 - [Done!] add more evaluation matrics - g measure, pd and pf 
 - [Done!] updated all evalauations for all tested projects
 - [Done!] rerun the expermint on wicket project for validation test
