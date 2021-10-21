@@ -165,7 +165,7 @@ class fasttextModel(object):
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
                             kfold_results["p_score"], kfold_results["r_score"],kfold_results["g_score"],kfold_results["pf_score"], kfold_results["kfold_counter"], pname])
-
+# main function - start implemetnation to fit models (kfold)
 if __name__ == '__main__':
     fasttext_model_object = fasttextModel()
     '''
