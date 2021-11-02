@@ -22,3 +22,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [Underprocess] approach desgin and write section
 
 - [under plan] cybersecurity concepts labels - fasttext with node.js: https://www.youtube.com/watch?v=-s5QVigBTEo
+- [under plan] cybersecurity paper Underprocess
