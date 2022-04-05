@@ -49,7 +49,6 @@ if __name__ == '__main__':
     '''
     1- for bug reeport project: reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
     .train and .valid format of fasttext.
-    2- for security vuln. project: reading CVEs and thier associated labels from CWEs, preprocessed the dataset, and split into train/test and create the model.
     '''
     for project_data in bugreports_source_dataset:
         project_name = os.path.basename(project_data)
@@ -66,7 +65,6 @@ if __name__ == '__main__':
         # split the data set into training and validating sets
         fasttext_model_object.split_train_test(
             project_data, training_file, testing_file)
-        # read the pre-processed dataset into dataframe - TBC
 
         df = read_training_data("./data/bug_reports/"+training_file)
 
