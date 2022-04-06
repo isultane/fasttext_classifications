@@ -42,10 +42,11 @@ class fasttextModelWithoutTunning(object):
             with open("./data/bug_reports/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
 
-    def fasttext_model(self, project_name):
+  #  def fasttext_model(self, project_name):
         
 if __name__ == '__main__':
-    fasttext_model_object = fasttextModel()
+    fasttext_model_object = fasttextModelWithoutTunning()
+    print("here...1")
     '''
     1- for bug reeport project: reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
     .train and .valid format of fasttext.
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     for project_data in bugreports_source_dataset:
         project_name = os.path.basename(project_data)
         print("processing project: " + project_name)
+        print("here...2")
 
         # prepare .train and .valid files names
         training_file = project_name.split('.')[0]
@@ -68,4 +70,4 @@ if __name__ == '__main__':
 
         df = read_training_data("./data/bug_reports/"+training_file)
 
-        models = fasttext_model_object.fasttext_kfold_model(df, project_name=project_name.split('.')[0])
+    #    models = fasttext_model_object.fasttext_kfold_model(df, project_name=project_name.split('.')[0])
