@@ -82,7 +82,6 @@ class fasttextModelWithoutTunning(object):
                 precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
                 print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
                 model_results = {
-
                         "model": model,
                         "f_score": f1_score,
                         "p_score": precision_score,
@@ -146,4 +145,4 @@ if __name__ == '__main__':
 
         df = read_training_data("./data/temp/"+training_file)
 
-    #    models = fasttext_model_object.fasttext_kfold_model(df, project_name=project_name.split('.')[0])
+        models = fasttext_model_object.fasttext_kfold_model(df, k=10, project_name=project_name.split('.')[0])
