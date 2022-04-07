@@ -76,9 +76,10 @@ class fasttextModelWithoutTunning(object):
 
             try:
                 # fit model for this set of parameter values
-                model = fasttext.train_supervised(train_fold)
+                model = fasttext.train_supervised(input=train_fold)
                 test_labels = parse_labels(test_fold)
                 pred_labels = predict_labels(test_fold, model)
+                
                 precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
                 print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
                 model_results = {
@@ -102,8 +103,8 @@ class fasttextModelWithoutTunning(object):
             # to get the best k-fold model results and save it to be used later
             best_model = best_results["model"]
             best_model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
-            #print("best results: ", best_results["conf"])
-            #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
+        
+           #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print(
                 "************************************ FOLD DONE ************************************")
         train_time = time.time()
