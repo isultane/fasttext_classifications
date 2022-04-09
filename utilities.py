@@ -88,7 +88,8 @@ def predict_labels(testfile, model):
 
     for line in lines:
         text = ' '.join(line.split()[2:])
-        label = model.predict([re.sub('\n', ' ', text)])[0][0]
+        label = model.predict(text)[0][0]
+        print(label)
         if label =='__label__sec':
            pred_label.append(sec)
         else:
@@ -103,13 +104,13 @@ def parse_labels(testfile):
     nonsec = 0
     count = 0
     for line in lines:
-        count +=1
+        #count +=1
         label = line.split()[0]
         if label =='__label__sec':
            test_lables.append(sec)
         else:
             test_lables.append(nonsec)
-    print(count + 'lables has been read')
+    #print(count + 'lables has been read')
     return test_lables
 
 # Function to calculate Precision and Recall.

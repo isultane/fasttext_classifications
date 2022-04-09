@@ -79,13 +79,13 @@ class fasttextModelWithoutTunning(object):
 
             try:
                 # fit model for this set of parameter values
-                model = fasttext.train_supervised(train_fold)
+                model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0, wordNgrams=2)
                 test_labels = parse_labels(test_fold)
                 pred_labels = predict_labels(test_fold, model)
                 print(test_labels)
                 print(pred_labels)
                 #precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
-                precision_score, recall_socre, f1_score,support = score(test_labels, pred_labels)
+                precision_score, recall_socre, f1_score,support = score(test_labels, pred_labels, average='weighted', labels=np.unique(pred_labels))
                 #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
                 print('Precision: {}'.format(precision_score))
                 print('Recall: {}'.format(recall_socre))
