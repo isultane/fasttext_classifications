@@ -101,12 +101,15 @@ def parse_labels(testfile):
     test_lables = []
     sec = 1
     nonsec = 0
+    count = 0
     for line in lines:
+        count +=1
         label = line.split()[0]
         if label =='__label__sec':
            test_lables.append(sec)
         else:
             test_lables.append(nonsec)
+    print(count + 'lables has been read')
     return test_lables
 
 # Function to calculate Precision and Recall.
