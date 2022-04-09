@@ -22,9 +22,12 @@ from scipy.sparse.sputils import matrix
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score, f1_score
+#from sklearn.metrics import accuracy_score, f1_score
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import precision_recall_fscore_support as score
+from sklearn.metrics import accuracy_score
+
 
 bugreports_source_dataset = glob.glob(
     "./data/temp/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
@@ -76,33 +79,29 @@ class fasttextModelWithoutTunning(object):
 
             try:
                 # fit model for this set of parameter values
-                model = fasttext.train_supervised(input=train_fold)
+                model = fasttext.train_supervised(train_fold)
                 test_labels = parse_labels(test_fold)
                 pred_labels = predict_labels(test_fold, model)
-                
-                precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
-                print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
-                model_results = {
-                        "model": model,
-                        "f_score": f1_score,
-                        "p_score": precision_score,
-                        "r_score": recall_socre,
-                        "g_score":g_score,
-                        "pf_score":pf,
-                        "kfold_counter": fold_counter
-                }
-                best_results = model_results                
+                print(test_labels)
+                print(pred_labels)
+                #precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
+                precision_score, recall_socre, f1_score,support = score(test_labels, pred_labels)
+                #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
+                print('Precision: {}'.format(precision_score))
+                print('Recall: {}'.format(recall_socre))
+                print('F1 score: {}'.format(f1_score))
+                print('Support: {}'.format(support))
+                accuracy_score(test_labels, pred_labels)  
             except Exception as e:
                 print(f"Error for fold={fold_counter}")
             '''
             print('mean train scores: ', np.mean(train_scores))
             print('mean val scores: ', np.mean(val_scores))
             '''
-            self.write_kfold_best_results(best_results, project_name)
+            #self.write_kfold_best_results(best_results, project_name)
 
             # to get the best k-fold model results and save it to be used later
-            best_model = best_results["model"]
-            best_model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+            #model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
         
            #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print(
