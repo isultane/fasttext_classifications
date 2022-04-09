@@ -15,7 +15,7 @@ import glob
 from utilities import read_training_data
 from utilities import parse_labels
 from utilities import predict_labels
-from utilities import calc_precision_recall_f1
+from utilities import calc_accurecy
 
 
 from scipy.sparse.sputils import matrix
@@ -55,14 +55,6 @@ class fasttextModelWithoutTunning(object):
         fold_counter = 0
         # for each fold
         for train_index, test_index in kf.split(df['label'], df['text']):
-            best_results = {
-                "f_score": 0.0,
-                "p_score": 0.0,
-                "r_score": 0.0,
-                "g_score":0.0,
-                "pf_score":0.0,
-                "kfold_counter": 0
-            }
             fold_counter += 1
             print("Processing fold: ", fold_counter)
             train_fold = './data/temp/ft_k' + \
@@ -82,23 +74,16 @@ class fasttextModelWithoutTunning(object):
                 model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0)
                 test_labels = parse_labels(test_fold)
                 pred_labels = predict_labels(test_fold, model)
-                #print(test_labels)
-                #print(pred_labels)
-                #precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
-                precision_score, recall_socre, f1_score,support = score(test_labels, pred_labels, average='weighted', labels=np.unique(pred_labels))
-                #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
-                print('Precision: {}'.format(precision_score))
-                print('Recall: {}'.format(recall_socre))
-                print('F1 score: {}'.format(f1_score))
-                print('Support: {}'.format(support))
-                accuracy_score(test_labels, pred_labels)  
+                
+                precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+
             except Exception as e:
                 print(f"Error for fold={fold_counter}")
             '''
             print('mean train scores: ', np.mean(train_scores))
             print('mean val scores: ', np.mean(val_scores))
             '''
-            #self.write_kfold_best_results(best_results, project_name)
+            self.write_kfold_results(precision_score, recall_socre, f1_score, pf, g_score, fold_counter,project_name)
 
             # to get the best k-fold model results and save it to be used later
             #model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
@@ -112,16 +97,13 @@ class fasttextModelWithoutTunning(object):
         return models
 
     # write kfold results to CSV file
-    def write_kfold_best_results(self, kfold_results, pname):
+    def write_kfold_results(self, p_score, r_socre, f1_score, pf, g_score,fold_counter, pname):
         with open('./data/temp/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
-            write.writerow([kfold_results["f_score"], kfold_results["p_score"],
-                            kfold_results["r_score"],kfold_results["g_score"],
-                            kfold_results["pf_score"], kfold_results["kfold_counter"], pname])
+            write.writerow(f1_score, p_score, r_socre,g_score, pf,fold_counter, pname)
         
 if __name__ == '__main__':
     fasttext_model_object = fasttextModelWithoutTunning()
-    print("here...1")
     '''
     1- for bug reeport project: reading bug reprts for projects Ambari, Camel, Derby, Wicket and Chromium after they pre-processed and splited into 
     .train and .valid format of fasttext.
@@ -129,7 +111,6 @@ if __name__ == '__main__':
     for project_data in bugreports_source_dataset:
         project_name = os.path.basename(project_data)
         print("processing project: " + project_name)
-        print("here...2")
 
         # prepare .train and .valid files names
         training_file = project_name.split('.')[0]

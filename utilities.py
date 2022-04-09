@@ -11,6 +11,11 @@ from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
 #nltk.download('stopwords') # it is used at the first time to download stopwords list
 #nltk.download('punkt')
+import numpy as np
+
+from sklearn.metrics import precision_recall_fscore_support as score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 # Returns a list of common english terms (words)
 def initialize_words():
@@ -112,6 +117,31 @@ def parse_labels(testfile):
             test_lables.append(nonsec)
     #print(count + 'lables has been read')
     return test_lables
+
+# Function to calcuate Precision and Recall, and other metrics using sklearn library
+def calc_accurecy(y_true, y_pred):
+    print("Calculating accuracy")
+    p_score, r_socre, f1_score = score(y_true, y_pred, average='weighted', labels=np.unique(y_pred))
+    #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
+    print('Precision: {}'.format(p_score))
+    print('Recall: {}'.format(r_socre))
+    print('F1 score: {}'.format(f1_score))
+    
+    # to extract TN and FP in order to calcuate false alarm (pf) and g-score
+    CM = confusion_matrix(y_true, y_pred)
+    TN = CM[0][0]
+    FN = CM[1][0]
+    TP = CM[1][1]
+    FP = CM[0][1]
+
+    if FP == 0 and TN == 0:
+        pf = 1
+    else:
+        pf = FP / (FP + TN)
+    
+    g_score = (2*r_socre*(1-pf))/(r_socre + (1-pf))
+
+    return p_score, r_socre, f1_score, pf, g_score
 
 # Function to calculate Precision and Recall.
 # Source: https://medium.com/@douglaspsteen/precision-recall-curves-d32e5b290248
