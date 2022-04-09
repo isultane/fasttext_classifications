@@ -88,6 +88,7 @@ def predict_labels(testfile, model):
         text = ' '.join(line.split()[2:])
         label = model.predict([re.sub('\n', ' ', text)])[0][0]
         pred_label.append(str(label).replace('[','').replace(']','').replace('"','').replace('\'',''))
+    print(pred_label)
     return pred_label
 
 def parse_labels(testfile):
@@ -104,7 +105,7 @@ def parse_labels(testfile):
 # Source: https://medium.com/@douglaspsteen/precision-recall-curves-d32e5b290248
 def calc_precision_recall_f1(y_true, y_pred):
     
-    # Convert predictions to series with index matching y_true
+   # Convert predictions to series with index matching y_true
    # y_pred = pd.Series(y_pred, index=y_true.index)
     
     # Instantiate counters
