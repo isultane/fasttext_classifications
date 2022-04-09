@@ -79,7 +79,7 @@ class fasttextModelWithoutTunning(object):
 
             try:
                 # fit model for this set of parameter values
-                model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0, wordNgrams=2)
+                model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0)
                 test_labels = parse_labels(test_fold)
                 pred_labels = predict_labels(test_fold, model)
                 print(test_labels)
