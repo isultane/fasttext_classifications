@@ -120,14 +120,14 @@ def parse_labels(testfile):
 
 # Function to calcuate Precision and Recall, and other metrics using sklearn library
 def calc_accurecy(y_true, y_pred):
-    print("Calculating accuracy")
+    #print("Calculating accuracy")
     precision, recall, fscore, support= score(y_true, y_pred, average='weighted', labels=np.unique(y_pred))
     
     #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
-    print('Precision: {}'.format(precision))
-    print('Recall: {}'.format(recall))
-    print('F1 score: {}'.format(fscore))
-    print('Support: {}'.format(support))
+    #print('Precision: {}'.format(precision))
+    #print('Recall: {}'.format(recall))
+    #print('F1 score: {}'.format(fscore))
+    #print('Support: {}'.format(support))
 
     
     # to extract TN and FP in order to calcuate false alarm (pf) and g-score

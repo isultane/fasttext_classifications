@@ -30,7 +30,7 @@ from sklearn.metrics import accuracy_score
 
 
 bugreports_source_dataset = glob.glob(
-    "./data/temp/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
+    "./data/bug_reports/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
 
 class fasttextModelWithoutTunning(object):
     def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.5):
@@ -39,14 +39,15 @@ class fasttextModelWithoutTunning(object):
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
             # save training data
-            with open("./data/temp/"+training_path, 'w') as trainFile:
+            with open("./data/bug_reports/results/"+training_path, 'w') as trainFile:
                 trainFile.writelines(x_train)
             # save testing data
-            with open("./data/temp/"+testing_path, 'w') as testFile:
+            with open("./data/bug_reports/results/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
     # this code for testing the approach of k-fold validation
     def fasttext_kfold_model(self, df, k, project_name):
         start_time = time.time()
+        print("Processing project" + project_name)
         # record results
         models = []
         
@@ -56,10 +57,10 @@ class fasttextModelWithoutTunning(object):
         # for each fold
         for train_index, test_index in kf.split(df['label'], df['text']):
             fold_counter += 1
-            print("Processing fold: ", fold_counter)
-            train_fold = './data/temp/ft_k' + \
+            #print("Processing fold: ", fold_counter)
+            train_fold = './data/bug_reports/results/ft_k' + \
                 str(fold_counter)+"_"+str(project_name)+'.train'
-            test_fold = './data/temp/ft_k' + \
+            test_fold = './data/bug_reports/results/ft_k' + \
                 str(fold_counter)+"_"+str(project_name)+'.valid'
             # save training subset for each fold
             df[['label', 'text']].iloc[train_index].to_csv(
@@ -75,7 +76,7 @@ class fasttextModelWithoutTunning(object):
             test_labels = parse_labels(test_fold)
             pred_labels = predict_labels(test_fold, model)
             precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
-            print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
+            #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
             '''
             print('mean train scores: ', np.mean(train_scores))
@@ -87,16 +88,15 @@ class fasttextModelWithoutTunning(object):
             #model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
         
            #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
-            print(
-                "************************************ FOLD DONE ************************************")
+           #print("************************************ FOLD DONE ************************************")
         train_time = time.time()
-        print('Train time: {:.2f}s'.format(train_time - start_time))
+        print('Train & tesing time: {:.2f}s'.format(train_time - start_time))
 
         return models
 
     # write kfold results to CSV file
     def write_kfold_results(self, p_score, r_socre, f1_score, pf, g_score,fold_counter, pname):
-        with open('./data/temp/kfold_'+str(pname)+'_results.csv', 'a') as results:
+        with open('./data/bug_reports/results/kfold_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             data = [p_score, r_socre, f1_score, pf, g_score,fold_counter, pname]
             write.writerow(data)
@@ -109,20 +109,20 @@ if __name__ == '__main__':
     '''
     for project_data in bugreports_source_dataset:
         project_name = os.path.basename(project_data)
-        print("processing project: " + project_name)
+        #print("processing project: " + project_name)
 
         # prepare .train and .valid files names
         training_file = project_name.split('.')[0]
         training_file = training_file + '.train'
-        print(training_file)
+        #print(training_file)
 
         testing_file = project_name.split('.')[0]
         testing_file = testing_file + '.valid'
-        print(testing_file)
+        #print(testing_file)
         # split the data set into training and validating sets
         fasttext_model_object.split_train_test(
             project_data, training_file, testing_file)
 
-        df = read_training_data("./data/temp/"+training_file)
+        df = read_training_data("./data/bug_reports/results/"+training_file)
 
         models = fasttext_model_object.fasttext_kfold_model(df, k=10, project_name=project_name.split('.')[0])
