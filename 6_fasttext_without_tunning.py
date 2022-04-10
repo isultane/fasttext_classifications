@@ -96,9 +96,10 @@ class fasttextModelWithoutTunning(object):
 
     # write kfold results to CSV file
     def write_kfold_results(self, p_score, r_socre, f1_score, pf, g_score,fold_counter, pname):
-        with open('./data/temp/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
+        with open('./data/temp/kfold_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
-            write.writerow(f1_score, p_score, r_socre,g_score, pf,fold_counter, pname)
+            data = [p_score, r_socre, f1_score, pf, g_score,fold_counter, pname]
+            write.writerow(data)
         
 if __name__ == '__main__':
     fasttext_model_object = fasttextModelWithoutTunning()
