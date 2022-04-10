@@ -69,22 +69,20 @@ class fasttextModelWithoutTunning(object):
             df[['label', 'text']].iloc[test_index].to_csv(
                 test_fold, index=None, header=None, sep=' ')
 
-            try:
-                # fit model for this set of parameter values
-                model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0)
-                test_labels = parse_labels(test_fold)
-                pred_labels = predict_labels(test_fold, model)
-                
-                precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+            
+            # fit model for this set of parameter values
+            model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0)
+            test_labels = parse_labels(test_fold)
+            pred_labels = predict_labels(test_fold, model)
+            precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+            print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
-            except Exception as e:
-                print(f"Error for fold={fold_counter}")
             '''
             print('mean train scores: ', np.mean(train_scores))
             print('mean val scores: ', np.mean(val_scores))
             '''
             self.write_kfold_results(precision_score, recall_socre, f1_score, pf, g_score, fold_counter,project_name)
-
+           
             # to get the best k-fold model results and save it to be used later
             #model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
         

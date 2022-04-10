@@ -121,10 +121,13 @@ def parse_labels(testfile):
 # Function to calcuate Precision and Recall, and other metrics using sklearn library
 def calc_accurecy(y_true, y_pred):
     print("Calculating accuracy")
-    p_score, r_socre, f1_score = score(y_true, y_pred, average='weighted', labels=np.unique(y_pred))
+    precision_score, recall_socre, f1_score = score(y_true, y_pred, average='weighted', labels=np.unique(y_pred))
+    p_score = precision_score
+    r_score = recall_socre
+    f_measure = f1_score
     #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
-    print('Precision: {}'.format(p_score))
-    print('Recall: {}'.format(r_socre))
+    print('Precision: {}'.format(precision_score))
+    print('Recall: {}'.format(recall_socre))
     print('F1 score: {}'.format(f1_score))
     
     # to extract TN and FP in order to calcuate false alarm (pf) and g-score
@@ -139,9 +142,9 @@ def calc_accurecy(y_true, y_pred):
     else:
         pf = FP / (FP + TN)
     
-    g_score = (2*r_socre*(1-pf))/(r_socre + (1-pf))
+    g_score = (2*r_score*(1-pf))/(r_score + (1-pf))
 
-    return p_score, r_socre, f1_score, pf, g_score
+    return p_score, r_score, f_measure, pf, g_score
 
 # Function to calculate Precision and Recall.
 # Source: https://medium.com/@douglaspsteen/precision-recall-curves-d32e5b290248
