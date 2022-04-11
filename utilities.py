@@ -133,8 +133,8 @@ def calc_accurecy(y_true, y_pred):
     # to extract TN and FP in order to calcuate false alarm (pf) and g-score
     CM = confusion_matrix(y_true, y_pred)
     TN = CM[0][0]
-    FN = CM[1][0]
-    TP = CM[1][1]
+#    FN = CM[1][0]
+#    TP = CM[1][1]
     FP = CM[0][1]
 
     if FP == 0 and TN == 0:

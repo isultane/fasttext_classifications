@@ -90,7 +90,9 @@ class fasttextModelWithoutTunning(object):
            #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
            #print("************************************ FOLD DONE ************************************")
         train_time = time.time()
-        print('Train & tesing time: {:.2f}s'.format(train_time - start_time))
+        #print('Train & tesing time: {:.2f}s'.format(train_time - start_time))
+        total_traning_testing_time = 'Train & tesing time: {:.2f}s'.format(train_time - start_time)
+        self.write_training_time(total_traning_testing_time, project_name)
 
         return models
 
@@ -99,6 +101,13 @@ class fasttextModelWithoutTunning(object):
         with open('./data/bug_reports/results/kfold_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             data = [p_score, r_socre, f1_score, pf, g_score,fold_counter, pname]
+            write.writerow(data)
+    
+    # write kfold results to CSV file
+    def write_training_time(self, training_time, pname):
+        with open('./data/bug_reports/results/total_training_time_results.csv', 'a') as tresults:
+            write = csv.writer(tresults)
+            data = [training_time, pname]
             write.writerow(data)
         
 if __name__ == '__main__':
