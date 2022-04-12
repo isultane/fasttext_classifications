@@ -146,7 +146,7 @@ if __name__ == "__main__":
         lr_probs = np.array(pred_probs, dtype=float)
 
         roc_point.append(roc_auc_calc(test_y, lr_probs))
-
+    
     for pl in roc_point:
         # hardcoded for calcualting ROC and AUC
         #roc_point = roc_auc_calc(test_y, lr_probs)
