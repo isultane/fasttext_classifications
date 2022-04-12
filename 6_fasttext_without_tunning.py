@@ -85,7 +85,7 @@ class fasttextModelWithoutTunning(object):
             self.write_kfold_results(precision_score, recall_socre, f1_score, pf, g_score, fold_counter,project_name)
            
             # to get the best k-fold model results and save it to be used later
-            #model.save_model("./data/temp/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+            model.save_model("./data/bug_reports/results/k" + str(fold_counter)+"_"+str(project_name)+"_model.bin")
         
            #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
            #print("************************************ FOLD DONE ************************************")

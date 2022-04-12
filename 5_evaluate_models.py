@@ -20,8 +20,8 @@ import glob
 import os
 
 # declaration of data sources paths
-validation_dataset = glob.glob("./data/bug_reports/*.valid")
-models_files = glob.glob("./data/best_kfold_models/*.bin")
+validation_dataset = glob.glob("./data/temp/*.valid")
+models_files = glob.glob("./data/temp/*.bin")
 
 
 
