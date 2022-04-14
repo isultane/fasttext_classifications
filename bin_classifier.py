@@ -25,7 +25,7 @@ def get_guess(r):
 # example command to run classifier on the balanced pandas dataset:
 # python ml_bin_classifier.py ../../datasets/data_set-pandas-balanced.txt ./out.txt
 if __name__ == '__main__':
-
+    '''
     print('* execute ' + sys.argv[0])
 
     # catch missing arguments
@@ -36,11 +36,12 @@ if __name__ == '__main__':
         print('\033[91m' + "Could not read arguments. Please use the correct command format. Example command:")
         print("python ml_bin_classifier.py ../../datasets/data_set-pandas-balanced.txt ./out.txt")
         exit()
-
+    '''
+    print("start here")
     # get sys args
-    data_set = sys.argv[1]
+    data_set = "./data/temp/dataset.txt"
     fn_in = os.path.basename(data_set)
-    f_out = sys.argv[2]
+    f_out = "./data/temp/out.txt"
 
     # define paths for temporary files
     b_path_train = os.path.dirname(__file__) + './tmp/b_tmp_train.txt'
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     try:
 
         print("Generating binary datasets")
-        cmd = "python ../data_acquisition/create_binary_datasets.py " + str(data_set) + " ./tmp/"
+        cmd = "python ./data/temp/create_binary_datasets.py " + str(data_set) + " ./tmp/"
         os.system(cmd)
 
         print("Converting dataset to array")
