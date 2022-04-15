@@ -44,19 +44,20 @@ if __name__ == '__main__':
     f_out = "./data/temp/out.txt"
 
     # define paths for temporary files
-    b_path_train = os.path.dirname(__file__) + './tmp/b_tmp_train.txt'
-    e_path_train = os.path.dirname(__file__) + './tmp/e_tmp_train.txt'
-    q_path_train = os.path.dirname(__file__) + './tmp/q_tmp_train.txt'
-    b_path = os.path.dirname(__file__) + './tmp/BUG-' + fn_in
-    e_path = os.path.dirname(__file__) + './tmp/ENHANCEMENT-' + fn_in
-    q_path = os.path.dirname(__file__) + './tmp/QUESTION-' + fn_in
+    b_path_train = "./data/temp/tmp/b_tmp_train.txt"
+    e_path_train = "./data/temp/tmp/e_tmp_train.txt"
+    q_path_train = "./data/temp/tmp/q_tmp_train.txt"
+    b_path = './data/temp/tmp/BUG-' + fn_in
+    e_path = './data/temp/tmp/ENHANCEMENT-' + fn_in
+    q_path = './data/temp/tmp/QUESTION-' + fn_in
 
     try:
 
+        '''
         print("Generating binary datasets")
         cmd = "python ./data/temp/create_binary_datasets.py " + str(data_set) + " ./tmp/"
         os.system(cmd)
-
+        '''
         print("Converting dataset to array")
         f = open(data_set, 'r+', encoding="UTF-8")
         data = array(f.readlines())
