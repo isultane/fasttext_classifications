@@ -25,3 +25,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [under plan] cybersecurity paper Underprocess
 - [Underprocess] run model with default values
 - [Underprocess] run model with considering the running time
+- [new task] new code used from github need more customization work
