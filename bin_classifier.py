@@ -262,8 +262,8 @@ if __name__ == '__main__':
         o.write(dump)
         o.close()
     # catch and print exceptions
-    except:
-        print("An Error occurred")
+    except Exception as e: 
+        print(e)
     # in any case delete existing temporary files
     finally:
         print("Deleting tmp files")
