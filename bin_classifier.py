@@ -47,9 +47,9 @@ if __name__ == '__main__':
     b_path_train = "./data/temp/tmp/b_tmp_train.txt"
     e_path_train = "./data/temp/tmp/e_tmp_train.txt"
     q_path_train = "./data/temp/tmp/q_tmp_train.txt"
-    b_path = './data/temp/tmp/BUG-' + fn_in
-    e_path = './data/temp/tmp/ENHANCEMENT-' + fn_in
-    q_path = './data/temp/tmp/QUESTION-' + fn_in
+    b_path = './data/temp/BUG-' + fn_in
+    e_path = './data/temp/ENHANCEMENT-' + fn_in
+    q_path = './data/temp/QUESTION-' + fn_in
 
     try:
 
