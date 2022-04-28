@@ -45,11 +45,11 @@ if __name__ == '__main__':
 
     # define paths for temporary files
     b_path_train = "./data/temp/tmp/b_tmp_train.txt"
-    e_path_train = "./data/temp/tmp/e_tmp_train.txt"
-    q_path_train = "./data/temp/tmp/q_tmp_train.txt"
+   # e_path_train = "./data/temp/tmp/e_tmp_train.txt"
+   # q_path_train = "./data/temp/tmp/q_tmp_train.txt"
     b_path = './data/temp/BUG-' + fn_in
-    e_path = './data/temp/ENHANCEMENT-' + fn_in
-    q_path = './data/temp/QUESTION-' + fn_in
+   # e_path = './data/temp/ENHANCEMENT-' + fn_in
+   # q_path = './data/temp/QUESTION-' + fn_in
 
     try:
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         f = open(b_path, 'r+', encoding="UTF-8")
         b_data = array(f.readlines())
         f.close()
-
+        '''
         print("Converting enhancement dataset to array")
         f = open(e_path, 'r+', encoding="UTF-8")
         e_data = array(f.readlines())
@@ -78,6 +78,8 @@ if __name__ == '__main__':
         q_data = array(f.readlines())
         f.close()
 
+        '''
+        
         # array for details
         fold_outputs = []
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
             TP_b = 0
             TP_FN_b = 0
             TP_FP_b = 0
-
+            '''
             TP_e = 0
             TP_FN_e = 0
             TP_FP_e = 0
@@ -101,6 +103,8 @@ if __name__ == '__main__':
             TP_FN_q = 0
             TP_FP_q = 0
 
+            '''
+            
             print("New tenfold iteration:", str(fold), "-----------------------------------------")
             print("Creating bug train file")
             b_tmp_train = open(b_path_train, "w", encoding="UTF-8")
@@ -108,6 +112,7 @@ if __name__ == '__main__':
                 b_tmp_train.write("".join(line))
             b_tmp_train.close()
 
+            '''
             print("Creating enhancement train file")
             e_tmp_train = open(e_path_train, "w", encoding="UTF-8")
             for line in e_data[train]:
@@ -120,14 +125,16 @@ if __name__ == '__main__':
                 q_tmp_train.write("".join(line))
             q_tmp_train.close()
 
+            '''
+            
             # get test data
             test_data = data[test]
 
             print("start training...")
             # train 3 models
             b_model = fasttext.train_supervised(input=b_path_train)
-            e_model = fasttext.train_supervised(input=e_path_train)
-            q_model = fasttext.train_supervised(input=q_path_train)
+           # e_model = fasttext.train_supervised(input=e_path_train)
+           # q_model = fasttext.train_supervised(input=q_path_train)
 
             # testing loop
             print("start testing for tenfold iteration...")
@@ -140,19 +147,19 @@ if __name__ == '__main__':
 
                 # predict with 3 models
                 b_res = b_model.predict(issue_text, k=-1)
-                e_res = e_model.predict(issue_text, k=-1)
-                q_res = q_model.predict(issue_text, k=-1)
+            #    e_res = e_model.predict(issue_text, k=-1)
+            #    q_res = q_model.predict(issue_text, k=-1)
 
                 # parse guesses
                 b_guess = get_guess(b_res)
-                e_guess = get_guess(e_res)
-                q_guess = get_guess(q_res)
+            #    e_guess = get_guess(e_res)
+            #    q_guess = get_guess(q_res)
 
                 # get most likely label from 3 results
                 res = {
                     b_guess[0]: b_guess[1],
-                    e_guess[0]: e_guess[1],
-                    q_guess[0]: q_guess[1]
+            #       e_guess[0]: e_guess[1],
+            #      q_guess[0]: q_guess[1]
                 }
                 guess = max(res, key=res.get)
 
@@ -161,7 +168,7 @@ if __name__ == '__main__':
                     TP_FP_b += 1
                     if guess == correct_answer:
                         TP_b += 1
-
+                '''
                 if guess == '__label__enhancement':
                     TP_FP_e += 1
                     if guess == correct_answer:
@@ -172,20 +179,23 @@ if __name__ == '__main__':
                     if guess == correct_answer:
                         TP_q += 1
 
+                '''
+                
                 if correct_answer == '__label__bug':
                     TP_FN_b += 1
-
+                '''
                 if correct_answer == '__label__enhancement':
                     TP_FN_e += 1
 
                 if correct_answer == '__label__question':
                     TP_FN_q += 1
-
+                '''
+                
                 # log
                 print("Issue nr." + str(i) + " has predicted: ")
                 print("Bug res: ", str(b_guess))
-                print("Enhancement res: ", str(e_guess))
-                print("Question res: ", str(q_guess))
+            #    print("Enhancement res: ", str(e_guess))
+            #    print("Question res: ", str(q_guess))
                 print("Final guess: ", str(guess))
                 print("Correct answer: ", correct_answer)
                 print("-------------------------------------------------")
@@ -195,6 +205,7 @@ if __name__ == '__main__':
             b_precision = TP_b / TP_FP_b
             b_f1 = 2 * ((b_precision * b_recall) / (b_precision + b_recall))
 
+            '''
             e_recall = TP_e / TP_FN_e
             e_precision = TP_e / TP_FP_e
             e_f1 = 2 * ((e_precision * e_recall) / (e_precision + e_recall))
@@ -203,11 +214,13 @@ if __name__ == '__main__':
             q_precision = TP_q / TP_FP_q
             q_f1 = 2 * ((q_precision * q_recall) / (q_precision + q_recall))
 
-            ges_recall = (b_recall + e_recall + q_recall) / 3
-            ges_precision = (b_precision + e_precision + q_precision) / 3
-            ges_f1 = (b_f1 + e_f1 + q_f1) / 3
+            '''
+            
+            ges_recall = (b_recall) / 1
+            ges_precision = (b_precision) / 1
+            ges_f1 = (b_f1 ) / 1
 
-            micro = (TP_b+TP_q+TP_e) / len(test_data)
+            micro = (TP_b) / len(test_data)
 
             result = {
                 '10-Fold iteration:': fold,
@@ -217,12 +230,12 @@ if __name__ == '__main__':
                 'Bug recall': b_recall,
                 'Bug precision': b_precision,
                 'Bug f1': b_f1,
-                'Enhancement recall': e_recall,
-                'Enhancement precision': e_precision,
-                'Enhancement f1': e_f1,
-                'Question recall': q_recall,
-                'Question precision': q_precision,
-                'Question f1': q_f1,
+            #    'Enhancement recall': e_recall,
+            #    'Enhancement precision': e_precision,
+            #    'Enhancement f1': e_f1,
+            #    'Question recall': q_recall,
+            #    'Question precision': q_precision,
+            #    'Question f1': q_f1,
                 'Micro': micro
             }
             # log
@@ -269,6 +282,7 @@ if __name__ == '__main__':
         print("Deleting tmp files")
         if os.path.exists(b_path_train):
             os.remove(b_path_train)
+        '''
         if os.path.exists(e_path_train):
             os.remove(e_path_train)
         if os.path.exists(q_path_train):
@@ -279,6 +293,7 @@ if __name__ == '__main__':
             os.remove(e_path)
         if os.path.exists(q_path):
             os.remove(q_path)
+        '''
         print("Exit.")
 
 # formulas used for calculations:
