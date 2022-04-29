@@ -17,7 +17,7 @@ import sys
 def get_guess(r):
     labels = r[0]
     j = 0
-    if labels[0] == '__label__other':
+    if labels[0] == '__label__sec-report':
         j = 1
     return r[0][j], r[1][j]
 
@@ -25,21 +25,10 @@ def get_guess(r):
 # example command to run classifier on the balanced pandas dataset:
 # python ml_bin_classifier.py ../../datasets/data_set-pandas-balanced.txt ./out.txt
 if __name__ == '__main__':
-    '''
-    print('* execute ' + sys.argv[0])
-
-    # catch missing arguments
-    try:
-        a1 = sys.argv[1]
-        a2 = sys.argv[2]
-    except IndexError as error:
-        print('\033[91m' + "Could not read arguments. Please use the correct command format. Example command:")
-        print("python ml_bin_classifier.py ../../datasets/data_set-pandas-balanced.txt ./out.txt")
-        exit()
-    '''
+   
     print("start here")
     # get sys args
-    data_set = "./data/temp/dataset.txt"
+    data_set = "./data/temp/chromium.txt"
     fn_in = os.path.basename(data_set)
     f_out = "./data/temp/out.txt"
 
@@ -52,33 +41,10 @@ if __name__ == '__main__':
    # q_path = './data/temp/QUESTION-' + fn_in
 
     try:
-
-        '''
-        print("Generating binary datasets")
-        cmd = "python ./data/temp/create_binary_datasets.py " + str(data_set) + " ./tmp/"
-        os.system(cmd)
-        '''
         print("Converting dataset to array")
         f = open(data_set, 'r+', encoding="UTF-8")
         data = array(f.readlines())
         f.close()
-
-        print("Converting bug dataset to array")
-        f = open(b_path, 'r+', encoding="UTF-8")
-        b_data = array(f.readlines())
-        f.close()
-        '''
-        print("Converting enhancement dataset to array")
-        f = open(e_path, 'r+', encoding="UTF-8")
-        e_data = array(f.readlines())
-        f.close()
-
-        print("Converting question dataset to array")
-        f = open(q_path, 'r+', encoding="UTF-8")
-        q_data = array(f.readlines())
-        f.close()
-
-        '''
         
         # array for details
         fold_outputs = []
@@ -94,47 +60,22 @@ if __name__ == '__main__':
             TP_b = 0
             TP_FN_b = 0
             TP_FP_b = 0
-            '''
-            TP_e = 0
-            TP_FN_e = 0
-            TP_FP_e = 0
-
-            TP_q = 0
-            TP_FN_q = 0
-            TP_FP_q = 0
-
-            '''
             
             print("New tenfold iteration:", str(fold), "-----------------------------------------")
             print("Creating bug train file")
             b_tmp_train = open(b_path_train, "w", encoding="UTF-8")
-            for line in b_data[train]:
+            for line in data[train]:
                 b_tmp_train.write("".join(line))
             b_tmp_train.close()
 
-            '''
-            print("Creating enhancement train file")
-            e_tmp_train = open(e_path_train, "w", encoding="UTF-8")
-            for line in e_data[train]:
-                e_tmp_train.write("".join(line))
-            e_tmp_train.close()
-
-            print("Creating question train file")
-            q_tmp_train = open(q_path_train, "w", encoding="UTF-8")
-            for line in q_data[train]:
-                q_tmp_train.write("".join(line))
-            q_tmp_train.close()
-
-            '''
             
             # get test data
             test_data = data[test]
 
             print("start training...")
-            # train 3 models
+            # train the models
             b_model = fasttext.train_supervised(input=b_path_train)
-           # e_model = fasttext.train_supervised(input=e_path_train)
-           # q_model = fasttext.train_supervised(input=q_path_train)
+           
 
             # testing loop
             print("start testing for tenfold iteration...")
@@ -145,57 +86,31 @@ if __name__ == '__main__':
                 issue_text = t[2].replace('\n', '').replace('\r', '')
                 correct_answer = t[0]
 
-                # predict with 3 models
+                # predict with the models
                 b_res = b_model.predict(issue_text, k=-1)
-            #    e_res = e_model.predict(issue_text, k=-1)
-            #    q_res = q_model.predict(issue_text, k=-1)
+            
 
                 # parse guesses
                 b_guess = get_guess(b_res)
-            #    e_guess = get_guess(e_res)
-            #    q_guess = get_guess(q_res)
 
                 # get most likely label from 3 results
                 res = {
-                    b_guess[0]: b_guess[1],
-            #       e_guess[0]: e_guess[1],
-            #      q_guess[0]: q_guess[1]
+                    b_guess[0]: b_guess[1]
                 }
                 guess = max(res, key=res.get)
 
                 # save results for recall, precision and f1 calculations
-                if guess == '__label__bug':
+                if guess == '__label__sec-report':
                     TP_FP_b += 1
                     if guess == correct_answer:
                         TP_b += 1
-                '''
-                if guess == '__label__enhancement':
-                    TP_FP_e += 1
-                    if guess == correct_answer:
-                        TP_e += 1
-
-                if guess == '__label__question':
-                    TP_FP_q += 1
-                    if guess == correct_answer:
-                        TP_q += 1
-
-                '''
                 
-                if correct_answer == '__label__bug':
+                if correct_answer == '__label__sec-report':
                     TP_FN_b += 1
-                '''
-                if correct_answer == '__label__enhancement':
-                    TP_FN_e += 1
-
-                if correct_answer == '__label__question':
-                    TP_FN_q += 1
-                '''
                 
                 # log
                 print("Issue nr." + str(i) + " has predicted: ")
                 print("Bug res: ", str(b_guess))
-            #    print("Enhancement res: ", str(e_guess))
-            #    print("Question res: ", str(q_guess))
                 print("Final guess: ", str(guess))
                 print("Correct answer: ", correct_answer)
                 print("-------------------------------------------------")
@@ -204,17 +119,6 @@ if __name__ == '__main__':
             b_recall = TP_b / TP_FN_b
             b_precision = TP_b / TP_FP_b
             b_f1 = 2 * ((b_precision * b_recall) / (b_precision + b_recall))
-
-            '''
-            e_recall = TP_e / TP_FN_e
-            e_precision = TP_e / TP_FP_e
-            e_f1 = 2 * ((e_precision * e_recall) / (e_precision + e_recall))
-
-            q_recall = TP_q / TP_FN_q
-            q_precision = TP_q / TP_FP_q
-            q_f1 = 2 * ((q_precision * q_recall) / (q_precision + q_recall))
-
-            '''
             
             ges_recall = (b_recall) / 1
             ges_precision = (b_precision) / 1
@@ -230,12 +134,6 @@ if __name__ == '__main__':
                 'Bug recall': b_recall,
                 'Bug precision': b_precision,
                 'Bug f1': b_f1,
-            #    'Enhancement recall': e_recall,
-            #    'Enhancement precision': e_precision,
-            #    'Enhancement f1': e_f1,
-            #    'Question recall': q_recall,
-            #    'Question precision': q_precision,
-            #    'Question f1': q_f1,
                 'Micro': micro
             }
             # log
@@ -276,24 +174,12 @@ if __name__ == '__main__':
         o.close()
     # catch and print exceptions
     except Exception as e: 
-        print(e)
+        print("Problem occured in fold" + e)
     # in any case delete existing temporary files
     finally:
         print("Deleting tmp files")
         if os.path.exists(b_path_train):
             os.remove(b_path_train)
-        '''
-        if os.path.exists(e_path_train):
-            os.remove(e_path_train)
-        if os.path.exists(q_path_train):
-            os.remove(q_path_train)
-        if os.path.exists(b_path):
-            os.remove(b_path)
-        if os.path.exists(e_path):
-            os.remove(e_path)
-        if os.path.exists(q_path):
-            os.remove(q_path)
-        '''
         print("Exit.")
 
 # formulas used for calculations:
