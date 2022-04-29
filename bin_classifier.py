@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
             print("start training...")
             # train the models
-            b_model = fasttext.train_supervised(input=b_path_train)
+            b_model = fasttext.train_supervised(input=b_path_train,epoch=40, lr=1.0)
            
 
             # testing loop
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         o.close()
     # catch and print exceptions
     except Exception as e: 
-        print("Problem occured in fold" + e)
+        print(e)
     # in any case delete existing temporary files
     finally:
         print("Deleting tmp files")
