@@ -100,7 +100,8 @@ if __name__ == '__main__':
                 guess = max(res, key=res.get)
 
                 # save results for recall, precision and f1 calculations
-                if guess == '__label__sec-report':
+                
+                if guess == '__label__nonsec-report':
                     TP_FP_b += 1
                     if guess == correct_answer:
                         TP_b += 1
