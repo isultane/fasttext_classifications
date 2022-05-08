@@ -36,7 +36,7 @@ if __name__ == '__main__':
     b_path_train = "./data/temp/tmp/b_tmp_train.txt"
    # e_path_train = "./data/temp/tmp/e_tmp_train.txt"
    # q_path_train = "./data/temp/tmp/q_tmp_train.txt"
-    b_path = './data/temp/BUG-' + fn_in
+   # b_path = './data/temp/BUG-' + fn_in
    # e_path = './data/temp/ENHANCEMENT-' + fn_in
    # q_path = './data/temp/QUESTION-' + fn_in
 
@@ -89,11 +89,11 @@ if __name__ == '__main__':
                 # predict with the models
                 b_res = b_model.predict(issue_text, k=-1)
             
-
                 # parse guesses
                 b_guess = get_guess(b_res)
 
-                # get most likely label from 3 results
+               
+                # get most likely label from the results
                 res = {
                     b_guess[0]: b_guess[1]
                 }
@@ -113,6 +113,9 @@ if __name__ == '__main__':
                 print("Bug res: ", str(b_guess))
                 print("Final guess: ", str(guess))
                 print("Correct answer: ", correct_answer)
+                print("TP_FP_b:",TP_FP_b)
+                print("TP_b" ,TP_b)
+                print("TP_FN_b",TP_FN_b)
                 print("-------------------------------------------------")
 
             # calculate benchmarks for ten fold iteration
