@@ -50,6 +50,9 @@ class fasttextModelWithoutTunning(object):
         print("Processing project" + project_name)
         # record results
         models = []
+
+        train_fold = ""
+        test_fold = ""
         
         # split the dataset into k folds
         kf = KFold(n_splits=k, shuffle=True)
@@ -94,6 +97,11 @@ class fasttextModelWithoutTunning(object):
         total_traning_testing_time = 'Train & tesing time: {:.2f}s'.format(train_time - start_time)
         self.write_training_time(total_traning_testing_time, project_name)
 
+        print("Deleting tmp files")
+        if os.path.exists(train_fold) and os.path.exists(test_fold):
+            os.remove(train_fold)
+            os.remove(test_fold)
+            
         return models
 
     # write kfold results to CSV file

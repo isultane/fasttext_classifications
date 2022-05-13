@@ -92,5 +92,7 @@ for f in filenames:
   print("Reading file: " + file_name)
   if file_name.startswith("Chromium"):
     readChromiumFile(f)
+    print("Doone reading and preprocessing Chromium dataset")
   else:
     readCSVfiles(f)
+    print("Done reading and preprcessing file")
