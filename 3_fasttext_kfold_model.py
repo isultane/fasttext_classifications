@@ -11,7 +11,7 @@ import re
 import csv
 import glob
 
-from utilities import read_training_data
+from utilities import calc_accurecy, read_training_data
 from utilities import parse_labels
 from utilities import predict_labels
 from utilities import calc_precision_recall_f1
@@ -42,10 +42,10 @@ class fasttextModel(object):
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
             # save training data
-            with open("./data/bug_reports/"+training_path, 'w') as trainFile:
+            with open("./data/bug_reports/results/"+training_path, 'w') as trainFile:
                 trainFile.writelines(x_train)
             # save testing data
-            with open("./data/bug_reports/"+testing_path, 'w') as testFile:
+            with open("./data/bug_reports/results/"+testing_path, 'w') as testFile:
                 testFile.writelines(x_test)
 
     # this code for testing the approach of k-fold validation
@@ -72,9 +72,9 @@ class fasttextModel(object):
             }
             fold_counter += 1
             print("Processing fold: ", fold_counter)
-            train_fold = './data/kfold_train_test_data/ft_k' + \
+            train_fold = './data/bug_reports/results/ft_k' + \
                 str(fold_counter)+"_"+str(project_name)+'.train'
-            test_fold = './data/kfold_train_test_data/ft_k' + \
+            test_fold = './data/bug_reports/results/ft_k' + \
                 str(fold_counter)+"_"+str(project_name)+'.valid'
             # save training subset for each fold
             df[['label', 'text']].iloc[train_index].to_csv(
@@ -106,7 +106,7 @@ class fasttextModel(object):
 
                                     test_labels = parse_labels(test_fold)
                                     pred_labels = predict_labels(test_fold, model)
-                                    precision_score, recall_socre, f1_score, pf, g_score, = calc_precision_recall_f1(test_labels, pred_labels)
+                                    precision_score, recall_socre, f1_score, pf, g_score, = calc_accurecy(test_labels, pred_labels)
                                     print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
                                     # select best values fold
@@ -147,12 +147,17 @@ class fasttextModel(object):
             self.write_kfold_best_results(best_results, project_name)
 
             # to get the best k-fold model results and save it to be used later
-            best_model = best_results["model"]
-            best_model.save_model("./data/best_kfold_models/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+            #best_model = best_results["model"]
+            #best_model.save_model("./data/results/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print(
                 "************************************ FOLD DONE ************************************")
+            print("Deleting tmp files: train and test files")
+            if os.path.exists(train_fold):
+                os.remove(train_fold)
+            if os.path.exists(test_fold):
+                os.remove(test_fold)
 
         train_time = time.time()
         print('Train time: {:.2f}s'.format(train_time - start_time))
@@ -161,7 +166,7 @@ class fasttextModel(object):
 
     # write kfold results to CSV file
     def write_kfold_best_results(self, kfold_results, pname):
-        with open('./data/best_kfold_models/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
+        with open('./data/bug_reports/results/kfold_best_'+str(pname)+'_results.csv', 'a') as results:
             write = csv.writer(results)
             write.writerow([kfold_results["conf"], kfold_results["f_score"],
                             kfold_results["p_score"], kfold_results["r_score"],kfold_results["g_score"],kfold_results["pf_score"], kfold_results["kfold_counter"], pname])
@@ -191,7 +196,7 @@ if __name__ == '__main__':
             project_data, training_file, testing_file)
         # read the pre-processed dataset into dataframe - TBC
 
-        df = read_training_data("./data/bug_reports/"+training_file)
+        df = read_training_data("./data/bug_reports/results/"+training_file)
       # df = read_training_data("./data/vulnerabilities_reports/"+training_file)
 
 
