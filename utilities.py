@@ -9,8 +9,8 @@ from nltk import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
-nltk.download('stopwords') # it is used at the first time to download stopwords list
-nltk.download('punkt')
+#nltk.download('stopwords') # it is used at the first time to download stopwords list
+#nltk.download('punkt')
 import numpy as np
 
 from sklearn.metrics import precision_recall_fscore_support as score

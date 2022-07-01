@@ -106,6 +106,7 @@ def roc_auc_calc(test_lbls, pred_lbls):
 
 def plot_roc(roc_point):
 
+    print("starts here...")
     pivot = pd.DataFrame(roc_point, columns=["x", "y"])
    
     #pyplot.scatter(pivot.y, pivot.x)
@@ -125,7 +126,7 @@ def plot_roc(roc_point):
     print("AUC score: ", auc)
 
 if __name__ == "__main__":
-
+    print("starts here ...")
     # define list to plot ROC for all projects
     roc_point = []
     # read *.valid data to extract test labels
@@ -149,7 +150,7 @@ if __name__ == "__main__":
     
     for pl in roc_point:
         # hardcoded for calcualting ROC and AUC
-        #roc_point = roc_auc_calc(test_y, lr_probs)
+        roc_point = roc_auc_calc(test_y, lr_probs)
         # plot ROC curve
         plot_roc(pl)
 
