@@ -117,7 +117,7 @@ class fasttextModelWithoutTunning(object):
             data = [p_score, r_socre, f1_score, pf, g_score,fold_counter, pname]
             write.writerow(data)
     
-    # write kfold results to CSV file
+    # write training time results to CSV file
     def write_training_time(self, training_time, pname):
         with open('./data/bug_reports/results/total_training_time_results.csv', 'a') as tresults:
             write = csv.writer(tresults)
