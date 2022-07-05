@@ -22,6 +22,7 @@ def cross_validate_project(test_project, training_list):
         precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
         #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
         write_kfold_results(precision_score, recall_socre, f1_score, pf, g_score, train,test_project)
+        model.save_model("./data/bug_reports/results/k" + str(train)+"_"+str(test_project)+"_model.bin")
 
 # write kfold results to CSV file
 def write_kfold_results(p_score, r_socre, f1_score, pf, g_score,fold_counter, pname):
