@@ -19,7 +19,7 @@ from sklearn.metrics import auc
 
 from matplotlib import pyplot
 # generate 2 class dataset
-data = open('./data/bug_reports/results/Chromium.valid').readlines()
+data = open('./data/temp/Chromium.valid').readlines()
 
 count_vect = CountVectorizer()
 

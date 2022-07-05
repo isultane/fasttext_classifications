@@ -31,6 +31,8 @@ def readCSVfiles(file_):
   with open(file_, 'r') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
+    nsbr_count = 0
+    sbr_count = 0
     for row in csv_reader:
         if line_count == 0:
         #    outfile.write(f'labal,doc\n')
@@ -38,8 +40,10 @@ def readCSVfiles(file_):
         else:
             if row[26] == '1':
                 row[26] = '__label__sec'
+                sbr_count += 1
             else:
                 row[26] = '__label__nonsec'
+                nsbr_count += 1
             # pre-processing the input file (tokanizing, stop words, etc.)
             row_preprocessed = parse_sentence(row[13] + row[14], wordlist)
 
@@ -50,6 +54,7 @@ def readCSVfiles(file_):
   # closing the output file 
   file_1.close()
   print(f'Processed {line_count} lines.')
+  print(f'SBR count {sbr_count} and NSBR count {nsbr_count}')
 
 # reading chrom bug reports and prepare the data into fasttext format
 def readChromiumFile(file_):
@@ -62,6 +67,8 @@ def readChromiumFile(file_):
   file_1 = open(outfile, "w")
 
   wordlist = initialize_words()
+  nsbr_count = 0
+  sbr_count = 0
 
   with open(file_, 'r') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -73,8 +80,10 @@ def readChromiumFile(file_):
         else:
             if row[3] == '1':
                 row[3] = '__label__sec'
+                sbr_count += 1
             else:
                 row[3] = '__label__nonsec'
+                nsbr_count += 1
             # pre-processing the input file (tokanizing, stop words, etc.)
             row_preprocessed = parse_sentence(row[2], wordlist)
 
@@ -85,6 +94,7 @@ def readChromiumFile(file_):
   # closing the output file 
   file_1.close()
   print(f'Processed {line_count} lines.')
+  print(f'SBR count {sbr_count} and NSBR count {nsbr_count}')
 
 # start read bug reports data and convert it into fasttext format
 for f in filenames:
