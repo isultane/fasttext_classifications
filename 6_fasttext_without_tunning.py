@@ -75,7 +75,7 @@ class fasttextModelWithoutTunning(object):
 
             
             # fit model for this set of parameter values
-            model = fasttext.train_supervised(train_fold, epoch=40, lr=1.0)
+            model = fasttext.train_supervised(train_fold, epoch=40, lr=0.5, loss='ova')
             test_labels = parse_labels(test_fold)
             pred_labels = predict_labels(test_fold, model)
             precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)

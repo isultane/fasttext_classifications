@@ -93,7 +93,7 @@ def predict_labels(testfile, model):
 
     for line in lines:
         text = ' '.join(line.split()[2:])
-        label = model.predict(text)[0][0]
+        label = model.predict(text, k=-1, threshold=0.5)[0][0]
         #print(label)
         if label =='__label__sec':
            pred_label.append(sec)
