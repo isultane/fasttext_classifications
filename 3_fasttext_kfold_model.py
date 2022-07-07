@@ -31,7 +31,7 @@ We have two sources of the datasets to be fed in fasttext model:
  2- vulnerabilities reports datasets
 '''
 bugreports_source_dataset = glob.glob(
-    "./data/bug_reports/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
+    "./data/temp/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
 vulnerabilities_source_dataset = glob.glob(
     "./data/vulnerabilities_reports/*.txt")  # source datasets path (vuln. reports after extracted in fasttext format)
 

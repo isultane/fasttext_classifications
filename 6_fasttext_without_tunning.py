@@ -30,7 +30,7 @@ from sklearn.metrics import accuracy_score
 
 
 bugreports_source_dataset = glob.glob(
-    "./data/bug_reports/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
+    "./data/temp/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
 
 class fasttextModelWithoutTunning(object):
     def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.5):
