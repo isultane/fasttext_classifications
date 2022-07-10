@@ -147,8 +147,8 @@ class fasttextModel(object):
             self.write_kfold_best_results(best_results, project_name)
 
             # to get the best k-fold model results and save it to be used later
-            #best_model = best_results["model"]
-            #best_model.save_model("./data/results/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
+            best_model = best_results["model"]
+            best_model.save_model("./data/bug_reports/results/best_k" + str(best_results["kfold_counter"])+"_"+str(project_name)+"_model.bin")
             #print("best results: ", best_results["conf"])
             #print("best values: ", best_results["f_score"], best_results["p_score"], best_results["r_score"])
             print(
