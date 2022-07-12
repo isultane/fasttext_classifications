@@ -79,10 +79,10 @@ class fasttextModelWithoutTunning(object):
             model = fasttext.train_supervised(train_fold, epoch=40, lr=0.5, loss='ova')
             test_labels = parse_labels(test_fold)
             pred_labels = predict_labels(test_fold, model)
-            #precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+            precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
             
             # hard coded fucntion to calcualte P, R, F1, pf, and G
-            precision_score, recall_socre, f1_score, pf, g_score = calc_precision_recall_f1(test_labels, pred_labels)
+            #precision_score, recall_socre, f1_score, pf, g_score = calc_precision_recall_f1(test_labels, pred_labels)
             #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
             '''
