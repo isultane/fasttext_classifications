@@ -33,7 +33,7 @@ bugreports_source_dataset = glob.glob(
     "./data/temp/*.txt")  # source datasets path (bug reports after extracted in fasttext format)
 
 class fasttextModelWithoutTunning(object):
-    def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.5):
+    def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.2):
         # split dataset into train and test, then save them (training 50% and testing 50%), same as it is followed by [REF]
         with open(datasetFile, "r") as reader:
             data = reader.readlines()
