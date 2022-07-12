@@ -16,6 +16,7 @@ from utilities import read_training_data
 from utilities import parse_labels
 from utilities import predict_labels
 from utilities import calc_accurecy
+from utilities import calc_precision_recall_f1
 
 
 from scipy.sparse.sputils import matrix
@@ -34,7 +35,7 @@ bugreports_source_dataset = glob.glob(
 
 class fasttextModelWithoutTunning(object):
     def split_train_test(self, datasetFile, training_path, testing_path, testing_size=0.2):
-        # split dataset into train and test, then save them (training 50% and testing 50%), same as it is followed by [REF]
+        # split dataset into train and test, then save them (training 80% and testing 20%), same as it is followed by [REF]
         with open(datasetFile, "r") as reader:
             data = reader.readlines()
             x_train, x_test = train_test_split(data, test_size=testing_size)
@@ -78,7 +79,10 @@ class fasttextModelWithoutTunning(object):
             model = fasttext.train_supervised(train_fold, epoch=40, lr=0.5, loss='ova')
             test_labels = parse_labels(test_fold)
             pred_labels = predict_labels(test_fold, model)
-            precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+            #precision_score, recall_socre, f1_score, pf, g_score = calc_accurecy(test_labels, pred_labels)
+            
+            # hard coded fucntion to calcualte P, R, F1, pf, and G
+            precision_score, recall_socre, f1_score, pf, g_score = calc_precision_recall_f1(test_labels, pred_labels)
             #print("Precision: ",precision_score , " Recall: ",recall_socre," F1_score: ",f1_score, "prob. false alarm: ", pf, "g_score", g_score)
 
             '''
