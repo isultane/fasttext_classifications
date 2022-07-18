@@ -1,7 +1,7 @@
 - [Fixed!] fixing issue: FastText recall is 'nan' but precision is a number. And the soltuion is pip3 install git+https://github.com/facebookresearch/fastText.git@b64e359d5485dda4b4b5074494155d18e25c8d13 
 - [Done!] fasttext model used to classifiy bug reports (security and non-security labels) 
 - [Done!] Calcluate ROC and AUC 
-- [Underprocess] writing the methodology section 
+- [Done!] writing the methodology section 
 - [Done!] on the virtual machine (virtualbox - ubunto) model = fasttext.train_supervised(input="ambari.valid") (not working)
 model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] Precision and Recall values Equals. This is because ""interpretation" of precision and recall in fastText", I am using binary classifications (security and non-security) while in fasttext apparently interprets any classification problem as multi-class.However, we are going to build our own confusion matrix.
@@ -19,11 +19,12 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] updated all evalauations for all tested projects
 - [Done!] rerun the expermint on wicket project for validation test
 - [Done!] Related work and background section
-- [Underprocess] approach desgin and write section
+- [Done!] approach desgin and write section
 
-- [under plan] cybersecurity concepts labels - fasttext with node.js: https://www.youtube.com/watch?v=-s5QVigBTEo
-- [under plan] cybersecurity paper Underprocess
-- [Underprocess] run model with default values
-- [Underprocess] run model with considering the running time
-- [new task] new code used from github need more customization work
-- [done!] new sytem enviroment to test the code with bigger memory size
+- [Underprocess - undergraduate student] cybersecurity concepts labels - fasttext with node.js: https://www.youtube.com/watch?v=-s5QVigBTEo
+- [Underprocess - undergraduate student] cybersecurity paper Underprocess
+- [Done!] run model with default values
+- [Done!] run model with considering the running time
+- [Done!] new code used from github need more customization work
+- [Done!] new sytem enviroment to test the code with bigger memory size
+- [Done!] cross-roject validation evaluation
