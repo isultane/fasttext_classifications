@@ -47,8 +47,6 @@ def get_score(model, x_train, x_test, y_train, y_test, project, model_name):
         pass
     
 
-    return model.score(x_test, y_test)
-
 # write kfold results to CSV file
 def write_kfold_results(p_score, r_socre, f1_score, pf, g_score,project, model_name):
     with open('./data/bug_reports/results/balanced_data_'+str(model_name)+'_results.csv', 'a') as results:
