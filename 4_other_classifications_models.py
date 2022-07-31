@@ -42,10 +42,18 @@ def get_score(model, x_train, x_test, y_train, y_test, project, model_name):
         else:
             pf = FP / (FP + TN)
         g_score = (2*recall*(1-pf))/(recall + (1-pf))
-        write_kfold_results(precision, recall, fscore, pf, g_score, project, model_name)
+       # write_kfold_results(precision, recall, fscore, pf, g_score, project, model_name)
+        print("Precision: ",precision , " Recall: ",recall," F1_score: ",fscore, "prob. false alarm: ", pf, "g_score", g_score)
     except:
         pass
     
+
+# write training time results to CSV file
+def write_training_time(self, training_time, pname):
+    with open('./data/bug_reports/results/other_models_total_processing_time_results.csv', 'a') as tresults:
+            write = csv.writer(tresults)
+            data = [training_time, pname]
+            write.writerow(data)
 
 # write kfold results to CSV file
 def write_kfold_results(p_score, r_socre, f1_score, pf, g_score,project, model_name):
@@ -71,6 +79,8 @@ def train_evaluate_model(model,matrix, targets, project, model_name):
     train_time = time.time()
     total_traning_testing_time = 'Train & tesing time: {:.2f}s'.format(train_time - start_time)
     print("Total training and validation time: " + total_traning_testing_time)
+    write_training_time(total_traning_testing_time, model_name)
+
 
 
 if __name__ == '__main__':
