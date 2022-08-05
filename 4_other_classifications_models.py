@@ -1,6 +1,9 @@
+from copyreg import pickle
 import csv
 from os import listdir
 from os.path import isfile, join
+from ssl import VERIFY_CRL_CHECK_CHAIN
+from numpy import vectorize
 
 import pandas as pd
 from sklearn import metrics
@@ -46,13 +49,19 @@ def get_score(model, x_train, x_test, y_train, y_test, project, model_name):
         print("Precision: ",precision , " Recall: ",recall," F1_score: ",fscore, "prob. false alarm: ", pf, "g_score", g_score)
     except:
         pass
-    
+    #store the classifier 
+    clf_filename = 'classifier.pkl'
+    pickle.dump(model, open(clf_filename, 'wb'))
+
+    #also store the vectorizer so we can transform new data
+    vec_filename = 'count_vectorizer.pkl'
+    pickle.dump(vectorizer, open(vec_filename,'wb'))
 
 # write training time results to CSV file
-def write_training_time(self, training_time, pname):
+def write_training_time(training_time, pname, mname):
     with open('./data/bug_reports/results/other_models_total_processing_time_results.csv', 'a') as tresults:
             write = csv.writer(tresults)
-            data = [training_time, pname]
+            data = [training_time, pname, mname]
             write.writerow(data)
 
 # write kfold results to CSV file
@@ -69,7 +78,7 @@ def train_evaluate_model(model,matrix, targets, project, model_name):
     counter = 0
     for train_index, test_index in folds.split(matrix):
         counter += 1
-        print(counter)
+        print("Count: ",counter)
         # split data to train test
         x_train, x_test, y_train, y_test = matrix[train_index], matrix[test_index],\
                                     targets[train_index], targets[test_index]
@@ -79,7 +88,7 @@ def train_evaluate_model(model,matrix, targets, project, model_name):
     train_time = time.time()
     total_traning_testing_time = 'Train & tesing time: {:.2f}s'.format(train_time - start_time)
     print("Total training and validation time: " + total_traning_testing_time)
-    write_training_time(total_traning_testing_time, model_name)
+ #   write_training_time(total_traning_testing_time, project, model_name)
 
 
 
@@ -112,17 +121,17 @@ if __name__ == '__main__':
         print("starts LogisticRegression algorithm ...")
         train_evaluate_model(LogisticRegression(),matrix, targets,project, 'LR')
 
-        print("starts RandomForestClassifier algorithm ...")
-        train_evaluate_model(RandomForestClassifier(),matrix, targets,project, 'RFC')
+#        print("starts RandomForestClassifier algorithm ...")
+#        train_evaluate_model(RandomForestClassifier(),matrix, targets,project, 'RFC')
 
-        print("starts GaussianNB algorithm ...")
-        train_evaluate_model(GaussianNB(),matrix.todense(), targets,project, 'GNB')
+#        print("starts GaussianNB algorithm ...")
+#        train_evaluate_model(GaussianNB(),matrix.todense(), targets,project, 'GNB')
 
-        print("starts KNeighborsClassifier algorithm ...")
-        train_evaluate_model(KNeighborsClassifier(),matrix, targets,project, 'KNN')
+#        print("starts KNeighborsClassifier algorithm ...")
+#        train_evaluate_model(KNeighborsClassifier(),matrix, targets,project, 'KNN')
 
-        print("Starts MLPClassifier algorithm ...")
-        train_evaluate_model(MLPClassifier(),matrix, targets,project, 'MLP')
+#        print("Starts MLPClassifier algorithm ...")
+#        train_evaluate_model(MLPClassifier(),matrix, targets,project, 'MLP')
 
 # in this .py we need to run the same dataset on SVC, RFC, LR, and other to check the results and compare them with fasttext results.
 # Also, we need to comare the performance for each algoeithm along with the same processed data to fasttext performance.
