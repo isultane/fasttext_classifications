@@ -1,26 +1,157 @@
 # Author: Sultan S. Alqahtani
 # Date: 06/16/2021 
-import fasttext
-from numpy import rint
 
-def doPrediction(model, text):
-    val = model.predict(text, 1)
-    label = None
+#import imp
+from pydoc import doc
+import string
+from tracemalloc import stop
+#from numpy import vectorize
+from sklearn import metrics
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 
-    if(val[0][0] == '__label__nonsec-report'):
-        label = 'not security'
-    else:
-        label = 'security'
-    
-    print("Text = "+text)
-    print("Label= "+ label)
-    print("Confidence Score = "+ str(val[1][0]))
-    
+from nltk import word_tokenize
+from collections import defaultdict
+from nltk import FreqDist
+from nltk.corpus import stopwords
+import os
+import random
+import string
+import pickle
+
+stop_words = set(stopwords.words('english'))
+stop_words.add('said')
+stop_words.add('mr')
+
+BASE_DIR = "path to files"
+LABELS = ['labels list']
+
+
+def creat_data_set():
+    with open('pathtofile', 'w', encoding='utf9') as outfile:
+        for label in LABELS:
+            dir = '%s%s' % (BASE_DIR, label)
+            for filename in os.listdir(dir):
+                fullfilenme = '%s%s' % (dir, filename)
+                print(fullfilenme)
+                with open(fullfilenme, 'rb') as file:
+                    text = file.read().decode(errors='replace').replace('\n', '')
+                    outfile.write('%s\t%s\t%s\n' %  (label, filename, text))
+
+def setup_docs():
+    docs = [] #(label, text)
+    with open ('./data/bug_reports/Camel.txt', 'r', encoding='utf8') as datafile:
+        for row in datafile:
+            parts = row.split(' ', 1)
+            doc = (parts[0], parts[1].strip())
+
+            docs.append(doc)
+    return docs
+
+def clean_text(text):
+    # remove punctution 
+    text = text.translate(str.maketrans('', '', string.punctuation))
+
+    # convert to lower case
+    text = text.lower()
+    return text
+
+def get_tokens(text):
+    # get individual words
+    tokens = word_tokenize(text)
+    # remove common words that are useless
+    tokens = [t for t in tokens if not t in stop_words]
+    return tokens
+
+def print_frequency_dis(docs):
+    tokens = defaultdict(list)
+
+    # lets make a gaint list of all the words for ech category
+    for doc in docs:
+        doc_label = doc[0]
+        doc_text = clean_text(doc[1])
+
+        doc_tokens = get_tokens(doc_text)
+
+        tokens[doc_label].extend(doc_tokens)
+
+        for category_label, category_tokens in tokens.items():
+            print(category_label)
+            fd = FreqDist(category_tokens)
+            print(fd.most_common(20))
+
+def get_splits(docs):
+    #scramble docs
+    random.shuffle(docs)
+
+    X_train = []    #traingin documents
+    y_train = []    #corresponding training labels
+
+    X_test = []     #test documents
+    y_test = []     #corresponding testing labels
+
+    pivot = int(.80 * len(docs))
+
+    for i in range(0, pivot):
+        X_train.append(docs[i][1])
+        y_train.append(docs[i][0])
+
+    for i in range(pivot, len(docs)):
+        X_test.append(docs[i][1])
+        y_test.append(docs[i][0])
+
+    return X_train, X_test, y_train, y_test 
+
+def evaluate_clssifier(title, classifier, vectorizer, X_test, y_test):
+    X_test_tfidf = vectorizer.transform(X_test)
+    y_pred = classifier.predict(X_test_tfidf)
+
+    precision = metrics.precision_score(y_test, y_pred, average="binary", pos_label="__label__sec")
+    recall = metrics.recall_score(y_test, y_pred, average="binary", pos_label="__label__sec")
+    f1 = metrics.f1_score(y_test,y_pred, average="binary", pos_label="__label__sec")
+
+    print("%s\t%f\t%f\t%f\n" % (title, precision, recall, f1))
+
+def train_classifier(docs):
+    X_train, X_test, y_train, y_test = get_splits(docs)
+
+    # the object that turns text into vectors 
+    vectorizer = CountVectorizer(stop_words='english',ngram_range=(1,3),min_df=3, analyzer='word')
+
+    # crete doc-term matrix
+    dtm = vectorizer.fit_transform(X_train)
+
+    # train Naive Bayes classfier 
+    naive_bayes_classifier = LogisticRegression().fit(dtm, y_train)
+
+    evaluate_clssifier("Naive Bayes\tTRAIN\t", naive_bayes_classifier, vectorizer, X_train, y_train)
+    evaluate_clssifier("Naive Bayes\tTEST\t", naive_bayes_classifier, vectorizer, X_test, y_test)
+
+    #store the classifier
+   # clf_filename = 'naive_bayes_clssifier.pkl'
+   # pickle.dump(naive_bayes_classifier, open(clf_filename, 'wb'))
+
+    #also store the vectorizer so we can transform new data
+   # vec_filename = 'count_vectorizer.pkl'
+   # pickle.dump(vectorizer, open(vec_filename, 'wb'))
+
+
 
 if __name__ == '__main__':
-    model = fasttext.load_model("model_ambari.bin")
+    #create_data_set()
 
-    doPrediction(model, "buffer overflow not security report")
-    #print(model.words)
-    #print(model.labels)
+    docs = setup_docs()
+
+    #print_frequency_dis(docs)
+
+    train_classifier(docs)
+
+    #new_doc = "test texts"
+
+    #classify(new_doc)
+
+    print("Done!")
+
+    
 
