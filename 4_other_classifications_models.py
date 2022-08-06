@@ -49,13 +49,7 @@ def get_score(model, x_train, x_test, y_train, y_test, project, model_name):
         print("Precision: ",precision , " Recall: ",recall," F1_score: ",fscore, "prob. false alarm: ", pf, "g_score", g_score)
     except:
         pass
-    #store the classifier 
-    clf_filename = 'classifier.pkl'
-    pickle.dump(model, open(clf_filename, 'wb'))
-
-    #also store the vectorizer so we can transform new data
-    vec_filename = 'count_vectorizer.pkl'
-    pickle.dump(vectorizer, open(vec_filename,'wb'))
+    
 
 # write training time results to CSV file
 def write_training_time(training_time, pname, mname):
