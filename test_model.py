@@ -164,15 +164,26 @@ def classify(text):
 if __name__ == '__main__':
     #create_data_set()
     projects_files = [f for f in os.listdir(BSE_DIR) if isfile(join(BSE_DIR, f))]
+   
+    tested_projects = []
+    training_list = []
+    
     for porject_data in projects_files:
-        docs = setup_docs(BSE_DIR+porject_data)
-        #print_frequency_dis(docs)
-        train_classifier('LogisticRegression', LogisticRegression(),docs)
-        train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
-        # train_classifier('GaussianNB', GaussianNB(),docs)
-        train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
-        train_classifier('MLPClassifier', MLPClassifier(),docs)
-        #new_doc = "test texts"
-        #classify(new_doc)
-
+        if porject_data not in tested_projects:
+            tested_projects.append(porject_data)
+        training_list = [i for i in projects_files if i not in tested_projects]
+        for train in training_list:
+            docs = setup_docs(BSE_DIR+train)
+            #print_frequency_dis(docs)
+            train_classifier('LogisticRegression', LogisticRegression(),docs)
+            train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
+            # train_classifier('GaussianNB', GaussianNB(),docs)
+            train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
+            train_classifier('MLPClassifier', MLPClassifier(),docs)
+            #new_doc = setup_docs(BSE_DIR+porject_data)
+            #classify(new_doc)
+        training_list.clear()
+        tested_projects.clear()
     print("Done!")
+
+    # useful link https://stackoverflow.com/questions/10592605/save-classifier-to-disk-in-scikit-learn 
