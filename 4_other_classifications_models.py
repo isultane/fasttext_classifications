@@ -112,20 +112,20 @@ if __name__ == '__main__':
         encoder = LabelEncoder()
         targets = encoder.fit_transform(trainDF['label'])
 
-        print("starts LogisticRegression algorithm ...")
-        train_evaluate_model(LogisticRegression(),matrix, targets,project, 'LR')
+        # print("starts LogisticRegression algorithm ...")
+        # train_evaluate_model(LogisticRegression(),matrix, targets,project, 'LR')
 
-#        print("starts RandomForestClassifier algorithm ...")
-#        train_evaluate_model(RandomForestClassifier(),matrix, targets,project, 'RFC')
+        # print("starts RandomForestClassifier algorithm ...")
+        # train_evaluate_model(RandomForestClassifier(),matrix, targets,project, 'RFC')
 
-#        print("starts GaussianNB algorithm ...")
-#        train_evaluate_model(GaussianNB(),matrix.todense(), targets,project, 'GNB')
+        # print("starts GaussianNB algorithm ...")
+        # train_evaluate_model(GaussianNB(),matrix.todense(), targets,project, 'GNB')
 
-#        print("starts KNeighborsClassifier algorithm ...")
-#        train_evaluate_model(KNeighborsClassifier(),matrix, targets,project, 'KNN')
+        # print("starts KNeighborsClassifier algorithm ...")
+        # train_evaluate_model(KNeighborsClassifier(),matrix, targets,project, 'KNN')
 
-#        print("Starts MLPClassifier algorithm ...")
-#        train_evaluate_model(MLPClassifier(),matrix, targets,project, 'MLP')
+        # print("Starts MLPClassifier algorithm ...")
+        # train_evaluate_model(MLPClassifier(),matrix, targets,project, 'MLP')
 
 # in this .py we need to run the same dataset on SVC, RFC, LR, and other to check the results and compare them with fasttext results.
 # Also, we need to comare the performance for each algoeithm along with the same processed data to fasttext performance.

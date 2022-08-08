@@ -2,14 +2,14 @@
 # Date: 06/16/2021 
 
 #import imp
+from genericpath import isfile
+from ntpath import join
 from pydoc import doc
 import string
 from tracemalloc import stop
 #from numpy import vectorize
 from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
 
 from nltk import word_tokenize
 from collections import defaultdict
@@ -20,28 +20,39 @@ import random
 import string
 import pickle
 
+#ML algorithms
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier  
+
+
+
 stop_words = set(stopwords.words('english'))
 stop_words.add('said')
 stop_words.add('mr')
 
-BASE_DIR = "path to files"
-LABELS = ['labels list']
+# BASE_DIR = "path to files"
+# LABELS = ['labels list']
+BSE_DIR = './data/balanced_data/'
 
 
-def creat_data_set():
-    with open('pathtofile', 'w', encoding='utf9') as outfile:
-        for label in LABELS:
-            dir = '%s%s' % (BASE_DIR, label)
-            for filename in os.listdir(dir):
-                fullfilenme = '%s%s' % (dir, filename)
-                print(fullfilenme)
-                with open(fullfilenme, 'rb') as file:
-                    text = file.read().decode(errors='replace').replace('\n', '')
-                    outfile.write('%s\t%s\t%s\n' %  (label, filename, text))
+# def creat_data_set():
+#     with open('pathtofile', 'w', encoding='utf9') as outfile:
+#         for label in LABELS:
+#             dir = '%s%s' % (BASE_DIR, label)
+#             for filename in os.listdir(dir):
+#                 fullfilenme = '%s%s' % (dir, filename)
+#                 print(fullfilenme)
+#                 with open(fullfilenme, 'rb') as file:
+#                     text = file.read().decode(errors='replace').replace('\n', '')
+#                     outfile.write('%s\t%s\t%s\n' %  (label, filename, text))
 
-def setup_docs():
+def setup_docs(porject_data):
     docs = [] #(label, text)
-    with open ('./data/bug_reports/Camel.txt', 'r', encoding='utf8') as datafile:
+    with open (porject_data, 'r', encoding='utf8') as datafile:
         for row in datafile:
             parts = row.split(' ', 1)
             doc = (parts[0], parts[1].strip())
@@ -113,7 +124,7 @@ def evaluate_clssifier(title, classifier, vectorizer, X_test, y_test):
 
     print("%s\t%f\t%f\t%f\n" % (title, precision, recall, f1))
 
-def train_classifier(docs):
+def train_classifier(classifier_title,classifier_algorithm,docs):
     X_train, X_test, y_train, y_test = get_splits(docs)
 
     # the object that turns text into vectors 
@@ -122,36 +133,46 @@ def train_classifier(docs):
     # crete doc-term matrix
     dtm = vectorizer.fit_transform(X_train)
 
-    # train Naive Bayes classfier 
-    naive_bayes_classifier = LogisticRegression().fit(dtm, y_train)
+    # train the classfier 
+    classifier = classifier_algorithm.fit(dtm, y_train)
 
-    evaluate_clssifier("Naive Bayes\tTRAIN\t", naive_bayes_classifier, vectorizer, X_train, y_train)
-    evaluate_clssifier("Naive Bayes\tTEST\t", naive_bayes_classifier, vectorizer, X_test, y_test)
+    evaluate_clssifier(classifier_title, classifier, vectorizer, X_train, y_train)
+    evaluate_clssifier(classifier_title, classifier, vectorizer, X_test, y_test)
 
-    #store the classifier
-   # clf_filename = 'naive_bayes_clssifier.pkl'
-   # pickle.dump(naive_bayes_classifier, open(clf_filename, 'wb'))
+#   store the classifier
+#   clf_filename = classifier_title+'.pkl'
+#   pickle.dump(classifier, open(clf_filename, 'wb'))
 
-    #also store the vectorizer so we can transform new data
-   # vec_filename = 'count_vectorizer.pkl'
-   # pickle.dump(vectorizer, open(vec_filename, 'wb'))
+#   also store the vectorizer so we can transform new data
+#   vec_filename = 'count_vectorizer.pkl'
+#   pickle.dump(vectorizer, open(vec_filename, 'wb'))
 
+def classify(text):
+    #load classifier
+    clf_filename = ''
+    nb_clf = pickle.load(open(clf_filename, 'rb'))
+
+    #vectorize the new text
+    vec_filname = ''
+    vectorizer = pickle.load(open(vec_filname, 'rb'))
+
+    pred = nb_clf.predict(vectorizer.transform([text]))
+
+    print(pred[0])
 
 
 if __name__ == '__main__':
     #create_data_set()
-
-    docs = setup_docs()
-
-    #print_frequency_dis(docs)
-
-    train_classifier(docs)
-
-    #new_doc = "test texts"
-
-    #classify(new_doc)
+    projects_files = [f for f in os.listdir(BSE_DIR) if isfile(join(BSE_DIR, f))]
+    for porject_data in projects_files:
+        docs = setup_docs(BSE_DIR+porject_data)
+        #print_frequency_dis(docs)
+        train_classifier('LogisticRegression', LogisticRegression(),docs)
+        train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
+        # train_classifier('GaussianNB', GaussianNB(),docs)
+        train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
+        train_classifier('MLPClassifier', MLPClassifier(),docs)
+        #new_doc = "test texts"
+        #classify(new_doc)
 
     print("Done!")
-
-    
-
