@@ -10,6 +10,8 @@ from tracemalloc import stop
 #from numpy import vectorize
 from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 from nltk import word_tokenize
 from collections import defaultdict
@@ -125,6 +127,7 @@ def evaluate_clssifier(title, classifier, vectorizer, X_test, y_test):
     print("%s\t%f\t%f\t%f\n" % (title, precision, recall, f1))
 
 def train_classifier(classifier_title,classifier_algorithm,docs):
+    #split document into 80% training and 20% testing
     X_train, X_test, y_train, y_test = get_splits(docs)
 
     # the object that turns text into vectors 
@@ -136,16 +139,23 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     # train the classfier 
     classifier = classifier_algorithm.fit(dtm, y_train)
 
-    evaluate_clssifier(classifier_title, classifier, vectorizer, X_train, y_train)
-    evaluate_clssifier(classifier_title, classifier, vectorizer, X_test, y_test)
+    # evaluate_clssifier(classifier_title, classifier, vectorizer, X_train, y_train)
+    # evaluate_clssifier(classifier_title, classifier, vectorizer, X_test, y_test)
 
-#   store the classifier
-#   clf_filename = classifier_title+'.pkl'
-#   pickle.dump(classifier, open(clf_filename, 'wb'))
+    X_test_tfidf = vectorizer.transform(X_test)
+    y_pred = classifier.predict(X_test_tfidf)   
+    
+    print(confusion_matrix(y_test,y_pred))
+    print(classification_report(y_test,y_pred))
+    print(accuracy_score(y_test, y_pred))
 
-#   also store the vectorizer so we can transform new data
-#   vec_filename = 'count_vectorizer.pkl'
-#   pickle.dump(vectorizer, open(vec_filename, 'wb'))
+    # store the classifier
+    clf_filename = classifier_title+'.pkl'
+    pickle.dump(classifier, open(clf_filename, 'wb'))
+
+    # also store the vectorizer so we can transform new data
+    vec_filename = classifier_title+'_count_vectorizer.pkl'
+    pickle.dump(vectorizer, open(vec_filename, 'wb'))
 
 def classify(text):
     #load classifier
@@ -180,8 +190,8 @@ if __name__ == '__main__':
             # train_classifier('GaussianNB', GaussianNB(),docs)
             train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
             train_classifier('MLPClassifier', MLPClassifier(),docs)
-            #new_doc = setup_docs(BSE_DIR+porject_data)
-            #classify(new_doc)
+            # new_doc = setup_docs(BSE_DIR+porject_data)
+            # classify(new_doc)
         training_list.clear()
         tested_projects.clear()
     print("Done!")
