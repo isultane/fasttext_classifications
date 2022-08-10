@@ -116,6 +116,7 @@ def get_splits(docs):
 
     return X_train, X_test, y_train, y_test 
 
+
 def evaluate_clssifier(title, classifier, vectorizer, X_test, y_test):
     X_test_tfidf = vectorizer.transform(X_test)
     y_pred = classifier.predict(X_test_tfidf)
@@ -157,9 +158,9 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     vec_filename = classifier_title+'_count_vectorizer.pkl'
     pickle.dump(vectorizer, open(vec_filename, 'wb'))
 
-def classify(classifier_title,target_project, docs):
-    X_train, X_test, y_train, y_test = get_splits(docs)
 
+def validate(classifier_title,target_project, target_title, training_title):
+    X_target_train, X_target_test,y_target_train, y_target_test = get_splits(target_project)
 
     #load classifier
     clf_filename = classifier_title+'.pkl'
@@ -168,12 +169,22 @@ def classify(classifier_title,target_project, docs):
     #vectorize the new text
     vec_filname = classifier_title+'_count_vectorizer.pkl'
     vectorizer = pickle.load(open(vec_filname, 'rb'))
+    y_pred = nb_clf.predict(vectorizer.transform(X_target_test))
 
-    y_pred = nb_clf.predict(vectorizer.transform([target_project]))
+    print("Writing the results of %s classifier after validating  %s project data.\n" % (classifier_title,target_title))
+    with open(target_title, 'a') as file:
+        file.write('\n Results of ' + classifier_title + '_vs_' + training_title)
+        file.write('\n'+classification_report(y_target_test,y_pred))
+    
+    # print(confusion_matrix(y_target_test,y_pred))
+    # print(classification_report(y_target_test,y_pred))
+    # print(accuracy_score(y_target_test, y_pred))
 
-    print(confusion_matrix(y_test,y_pred))
-    print(classification_report(y_test,y_pred))
-    print(accuracy_score(y_test, y_pred))
+    print("Deleting tmp files: model and vectorizer files")
+    if os.path.exists(clf_filename):
+        os.remove(clf_filename)
+    if os.path.exists(vec_filname):
+        os.remove(vec_filname)
 
 
 if __name__ == '__main__':
@@ -183,22 +194,32 @@ if __name__ == '__main__':
     tested_projects = []
     training_list = []
     
-    for porject_data in projects_files:
-        if porject_data not in tested_projects:
-            tested_projects.append(porject_data)
+    for target_project in projects_files:
+        if target_project not in tested_projects:
+            tested_projects.append(target_project)
         training_list = [i for i in projects_files if i not in tested_projects]
         for train in training_list:
+            #preparing the training project data
             docs = setup_docs(BSE_DIR+train)
             #print_frequency_dis(docs)
+            #preparing the target project data 
+            new_docs = setup_docs(BSE_DIR+target_project)
+
             train_classifier('LogisticRegression', LogisticRegression(),docs)
+            validate('LogisticRegression',new_docs,target_project, train)
+
             train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
+            validate('RandomForestClassifier',new_docs,target_project, train)
+
             # train_classifier('GaussianNB', GaussianNB(),docs)
             train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
+            validate('KNeighborsClassifier',new_docs,target_project, train)
+
             train_classifier('MLPClassifier', MLPClassifier(),docs)
+            validate('MLPClassifier',new_docs,target_project, train)
+
             # validating target project
-            print('validting the project')
-            new_docs = setup_docs(BSE_DIR+porject_data)
-            classify('LogisticRegression',new_docs, docs)
+            
         training_list.clear()
         tested_projects.clear()
     print("Done!")
