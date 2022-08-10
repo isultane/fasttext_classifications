@@ -142,12 +142,12 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     # evaluate_clssifier(classifier_title, classifier, vectorizer, X_train, y_train)
     # evaluate_clssifier(classifier_title, classifier, vectorizer, X_test, y_test)
 
-    X_test_tfidf = vectorizer.transform(X_test)
-    y_pred = classifier.predict(X_test_tfidf)   
+    # X_test_tfidf = vectorizer.transform(X_test)
+    # y_pred = classifier.predict(X_test_tfidf)   
     
-    print(confusion_matrix(y_test,y_pred))
-    print(classification_report(y_test,y_pred))
-    print(accuracy_score(y_test, y_pred))
+    # print(confusion_matrix(y_test,y_pred))
+    # print(classification_report(y_test,y_pred))
+    # print(accuracy_score(y_test, y_pred))
 
     # store the classifier
     clf_filename = classifier_title+'.pkl'
@@ -157,18 +157,23 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     vec_filename = classifier_title+'_count_vectorizer.pkl'
     pickle.dump(vectorizer, open(vec_filename, 'wb'))
 
-def classify(text):
+def classify(classifier_title,target_project, docs):
+    X_train, X_test, y_train, y_test = get_splits(docs)
+
+
     #load classifier
-    clf_filename = ''
+    clf_filename = classifier_title+'.pkl'
     nb_clf = pickle.load(open(clf_filename, 'rb'))
 
     #vectorize the new text
-    vec_filname = ''
+    vec_filname = classifier_title+'_count_vectorizer.pkl'
     vectorizer = pickle.load(open(vec_filname, 'rb'))
 
-    pred = nb_clf.predict(vectorizer.transform([text]))
+    y_pred = nb_clf.predict(vectorizer.transform([target_project]))
 
-    print(pred[0])
+    print(confusion_matrix(y_test,y_pred))
+    print(classification_report(y_test,y_pred))
+    print(accuracy_score(y_test, y_pred))
 
 
 if __name__ == '__main__':
@@ -190,10 +195,13 @@ if __name__ == '__main__':
             # train_classifier('GaussianNB', GaussianNB(),docs)
             train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
             train_classifier('MLPClassifier', MLPClassifier(),docs)
-            # new_doc = setup_docs(BSE_DIR+porject_data)
-            # classify(new_doc)
+            # validating target project
+            print('validting the project')
+            new_docs = setup_docs(BSE_DIR+porject_data)
+            classify('LogisticRegression',new_docs, docs)
         training_list.clear()
         tested_projects.clear()
     print("Done!")
 
     # useful link https://stackoverflow.com/questions/10592605/save-classifier-to-disk-in-scikit-learn 
+    # useful link https://stackabuse.com/text-classification-with-python-and-scikit-learn/
