@@ -12,6 +12,7 @@ from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import precision_recall_fscore_support as score
 
 from nltk import word_tokenize
 from collections import defaultdict
@@ -135,7 +136,10 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     vectorizer = CountVectorizer(stop_words='english',ngram_range=(1,3),min_df=3, analyzer='word')
 
     # crete doc-term matrix
-    dtm = vectorizer.fit_transform(X_train)
+    if classifier_title is 'GaussianNB':
+        dtm = vectorizer.fit_transform(X_train).toarray()
+    else:
+        dtm = vectorizer.fit_transform(X_train)
 
     # train the classfier 
     classifier = classifier_algorithm.fit(dtm, y_train)
@@ -158,7 +162,19 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     vec_filename = classifier_title+'_count_vectorizer.pkl'
     pickle.dump(vectorizer, open(vec_filename, 'wb'))
 
-
+def calculte_pf(y_test, predictions):
+    CM = confusion_matrix(y_test, predictions)
+    TN = CM[0][0]
+    #  FN = CM[1][0]
+    #  TP = CM[1][1]
+    FP = CM[0][1]
+    if FP == 0 and TN == 0:
+        pf = 1
+        return pf
+    else:
+        pf = FP / (FP + TN)
+        return pf
+    
 def validate(classifier_title,target_project, target_title, training_title):
     X_target_train, X_target_test,y_target_train, y_target_test = get_splits(target_project)
 
@@ -169,12 +185,28 @@ def validate(classifier_title,target_project, target_title, training_title):
     #vectorize the new text
     vec_filname = classifier_title+'_count_vectorizer.pkl'
     vectorizer = pickle.load(open(vec_filname, 'rb'))
-    y_pred = nb_clf.predict(vectorizer.transform(X_target_test))
+
+    if classifier_title is 'GaussianNB':
+        y_pred = nb_clf.predict(vectorizer.transform(X_target_test).toarray())
+    else:
+        y_pred = nb_clf.predict(vectorizer.transform(X_target_test))
+
+   
+    report = classification_report(y_target_test, y_pred, output_dict=True )
+    precision =  report['macro avg']['precision'] 
+    recall = report['macro avg']['recall']    
+    f1_score = report['macro avg']['f1-score']
+    pf = calculte_pf(y_target_test, y_pred)
+    g_score = (2*recall*(1-pf))/(recall + (1-pf))
 
     print("Writing the results of %s classifier after validating  %s project data.\n" % (classifier_title,target_title))
-    with open(target_title, 'a') as file:
+    with open('updated_'+target_title, 'a') as file:
         file.write('\n Results of ' + classifier_title + '_vs_' + training_title)
-        file.write('\n'+classification_report(y_target_test,y_pred))
+        file.write('\n macro_precision : {}'.format(precision))
+        file.write('\n macro_recall : {}'.format(recall))
+        file.write('\n macro_f1 : {}'.format(f1_score))
+        file.write('\n pf : {}'.format(pf))
+        file.write('\n g_score : {}'.format(g_score))
     
     # print(confusion_matrix(y_target_test,y_pred))
     # print(classification_report(y_target_test,y_pred))
@@ -190,7 +222,7 @@ def validate(classifier_title,target_project, target_title, training_title):
 if __name__ == '__main__':
     #create_data_set()
     projects_files = [f for f in os.listdir(BSE_DIR) if isfile(join(BSE_DIR, f))]
-   
+
     tested_projects = []
     training_list = []
     
@@ -211,7 +243,9 @@ if __name__ == '__main__':
             train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
             validate('RandomForestClassifier',new_docs,target_project, train)
 
-            # train_classifier('GaussianNB', GaussianNB(),docs)
+            train_classifier('GaussianNB', GaussianNB(),docs)
+            validate('GaussianNB',new_docs,target_project, train)
+
             train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
             validate('KNeighborsClassifier',new_docs,target_project, train)
 
