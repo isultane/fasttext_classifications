@@ -2,6 +2,7 @@
 # Date: 06/16/2021 
 
 #import imp
+import csv
 from genericpath import isfile
 from ntpath import join
 from pydoc import doc
@@ -120,17 +121,7 @@ def get_splits(docs):
     return X_train, X_test, y_train, y_test 
 
 
-def evaluate_clssifier(title, classifier, vectorizer, X_test, y_test):
-    X_test_tfidf = vectorizer.transform(X_test)
-    y_pred = classifier.predict(X_test_tfidf)
-
-    precision = metrics.precision_score(y_test, y_pred, average="binary", pos_label="__label__sec")
-    recall = metrics.recall_score(y_test, y_pred, average="binary", pos_label="__label__sec")
-    f1 = metrics.f1_score(y_test,y_pred, average="binary", pos_label="__label__sec")
-
-    print("%s\t%f\t%f\t%f\n" % (title, precision, recall, f1))
-
-def train_classifier(classifier_title,classifier_algorithm,docs):
+def train_classifier(classifier_title,classifier_algorithm,docs, project_name):
     #split document into 80% training and 20% testing
     X_train, X_test, y_train, y_test = get_splits(docs)
    
@@ -138,57 +129,47 @@ def train_classifier(classifier_title,classifier_algorithm,docs):
     X_train = numpy.array(X_train)
 
     kf = KFold(n_splits=10)
-    kf.get_n_splits(X_train)
+    # kf.get_n_splits(X_train)
     metrics = []
-    for train_index, test_index in kf.split(X_train, y_train):
-        print("TRAIN:", train_index, "TEST:", test_index)
-        X_train, X_test = X_train[train_index], X_train[test_index]
-        y_train, y_test = y_train[train_index], y_train[test_index]
-        vect = CountVectorizer(ngram_range=(1,2), max_features=1000 , 
-        stop_words="english")
-        X_train_dtm = vect.fit_transform(X_train)
-        X_test_dtm = vect.transform(X_test).toarray()
+    for train_index, test_index in kf.split(X_train):
+        # print("TRAIN:", train_index, "TEST:", test_index)
+        X_train_, X_test_ = X_train[train_index], X_train[test_index]
+        y_train_, y_test_ = y_train[train_index], y_train[test_index]
+        vect = CountVectorizer(stop_words='english',ngram_range=(1,3),min_df=3, analyzer='word')
+        
+        if classifier_title is 'GaussianNB':
+            X_train_dtm = vect.fit_transform(X_train_).toarray()
+            X_test_dtm = vect.transform(X_test_).toarray()
+        else:
+            X_train_dtm = vect.fit_transform(X_train_)
+            X_test_dtm = vect.transform(X_test_)
+
         nb = classifier_algorithm
-        nb.fit(X_train_dtm, y_train)
+        nb.fit(X_train_dtm, y_train_)
         y_pred_class = nb.predict(X_test_dtm)
         
-        metrics.append(accuracy_score(y_test, y_pred_class))
+        metrics.append(accuracy_score(y_test_, y_pred_class))
 
-    metrics = numpy.array(metrics)
-    print('Mean accuracy: ', numpy.mean(metrics, axis=0))
-    print('Std for accuracy: ', numpy.std(metrics, axis=0))
+        report = classification_report(y_test_, y_pred_class, output_dict=True )
+        precision =  report['macro avg']['precision'] 
+        recall = report['macro avg']['recall']    
+        f1_score = report['macro avg']['f1-score']
+        pf = calculte_pf(y_test_, y_pred_class)
+        g_score = (2*recall*(1-pf))/(recall + (1-pf))
 
-   
-    #  # the object that turns text into vectors 
-    # vectorizer = CountVectorizer(stop_words='english',ngram_range=(1,3),min_df=3, analyzer='word')
+        write_kfold_results(precision, recall, f1_score, pf, g_score, project_name, classifier_title)
 
-    # # crete doc-term matrix
-    # if classifier_title is 'GaussianNB':
-    #     dtm = vectorizer.fit_transform(X_train).toarray()
-    # else:
-    #     dtm = vectorizer.fit_transform(X_train)
+    # metrics = numpy.array(metrics)
+    # print('Mean accuracy: ', numpy.mean(metrics, axis=0))
+    # print('Std for accuracy: ', numpy.std(metrics, axis=0))
 
-    # # train the classfier 
-    # classifier = classifier_algorithm.fit(dtm, y_train)
-
-    # # evaluate_clssifier(classifier_title, classifier, vectorizer, X_train, y_train)
-    # # evaluate_clssifier(classifier_title, classifier, vectorizer, X_test, y_test)
-
-    # # X_test_tfidf = vectorizer.transform(X_test)
-    # # y_pred = classifier.predict(X_test_tfidf)   
+# write kfold results to CSV file
+def write_kfold_results(p_score, r_socre, f1_score, pf, g_score,project, model_name):
+    with open('./data/bug_reports/results/V2_balanced_data_'+str(model_name)+'_results.csv', 'a') as results:
+            write = csv.writer(results)
+            data = [p_score, r_socre, f1_score, pf, g_score,project, model_name]
+            write.writerow(data)
     
-    # # print(confusion_matrix(y_test,y_pred))
-    # # print(classification_report(y_test,y_pred))
-    # # print(accuracy_score(y_test, y_pred))
-
-    # # store the classifier
-    # clf_filename = classifier_title+'.pkl'
-    # pickle.dump(classifier, open(clf_filename, 'wb'))
-
-    # # also store the vectorizer so we can transform new data
-    # vec_filename = classifier_title+'_count_vectorizer.pkl'
-    # pickle.dump(vectorizer, open(vec_filename, 'wb'))
-
 def calculte_pf(y_test, predictions):
     CM = confusion_matrix(y_test, predictions)
     TN = CM[0][0]
@@ -201,50 +182,6 @@ def calculte_pf(y_test, predictions):
     else:
         pf = FP / (FP + TN)
         return pf
-    
-def validate(classifier_title,target_project, target_title, training_title):
-    X_target_train, X_target_test,y_target_train, y_target_test = get_splits(target_project)
-
-    #load classifier
-    clf_filename = classifier_title+'.pkl'
-    nb_clf = pickle.load(open(clf_filename, 'rb'))
-
-    #vectorize the new text
-    vec_filname = classifier_title+'_count_vectorizer.pkl'
-    vectorizer = pickle.load(open(vec_filname, 'rb'))
-
-    if classifier_title is 'GaussianNB':
-        y_pred = nb_clf.predict(vectorizer.transform(X_target_test).toarray())
-    else:
-        y_pred = nb_clf.predict(vectorizer.transform(X_target_test))
-
-   
-    report = classification_report(y_target_test, y_pred, output_dict=True )
-    precision =  report['macro avg']['precision'] 
-    recall = report['macro avg']['recall']    
-    f1_score = report['macro avg']['f1-score']
-    pf = calculte_pf(y_target_test, y_pred)
-    g_score = (2*recall*(1-pf))/(recall + (1-pf))
-
-    print("Writing the results of %s classifier after validating  %s project data.\n" % (classifier_title,target_title))
-    with open('updated_'+target_title, 'a') as file:
-        file.write('\n Results of ' + classifier_title + '_vs_' + training_title)
-        file.write('\n macro_precision : {}'.format(precision))
-        file.write('\n macro_recall : {}'.format(recall))
-        file.write('\n macro_f1 : {}'.format(f1_score))
-        file.write('\n pf : {}'.format(pf))
-        file.write('\n g_score : {}'.format(g_score))
-    
-    # print(confusion_matrix(y_target_test,y_pred))
-    # print(classification_report(y_target_test,y_pred))
-    # print(accuracy_score(y_target_test, y_pred))
-
-    print("Deleting tmp files: model and vectorizer files")
-    if os.path.exists(clf_filename):
-        os.remove(clf_filename)
-    if os.path.exists(vec_filname):
-        os.remove(vec_filname)
-
 
 if __name__ == '__main__':
     #create_data_set()
@@ -254,38 +191,17 @@ if __name__ == '__main__':
     training_list = []
     
     for target_project in projects_files:
-        if target_project not in tested_projects:
-            tested_projects.append(target_project)
-        training_list = [i for i in projects_files if i not in tested_projects]
-        for train in training_list:
-            #preparing the training project data
-            print('Processing project:' + train)
-            docs = setup_docs(BSE_DIR+train)
-            #print_frequency_dis(docs)
-            #preparing the target project data 
-            new_docs = setup_docs(BSE_DIR+target_project)
+        #preparing the training project data
+        print('Processing project:' + target_project)
+        docs = setup_docs(BSE_DIR+target_project)
+        #print_frequency_dis(docs)
 
-            train_classifier('LogisticRegression', LogisticRegression(),docs)
-            # validate('LogisticRegression',new_docs,target_project, train)
-
-            # train_classifier('RandomForestClassifier', RandomForestClassifier(),docs)
-            # validate('RandomForestClassifier',new_docs,target_project, train)
-
-            # train_classifier('GaussianNB', GaussianNB(),docs)
-            # validate('GaussianNB',new_docs,target_project, train)
-
-            # train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs)
-            # validate('KNeighborsClassifier',new_docs,target_project, train)
-
-            # train_classifier('MLPClassifier', MLPClassifier(),docs)
-            # validate('MLPClassifier',new_docs,target_project, train)
-
-            # validating target project
-            
-        training_list.clear()
-        tested_projects.clear()
+        train_classifier('LogisticRegression', LogisticRegression(),docs, target_project)
+        train_classifier('RandomForestClassifier', RandomForestClassifier(),docs,target_project)
+        train_classifier('GaussianNB', GaussianNB(),docs,target_project)
+        train_classifier('KNeighborsClassifier', KNeighborsClassifier(),docs,target_project)
+        train_classifier('MLPClassifier', MLPClassifier(),docs,target_project)        
     print("Done!")
 
-    # useful link https://stackoverflow.com/questions/10592605/save-classifier-to-disk-in-scikit-learn 
-    # useful link https://stackabuse.com/text-classification-with-python-and-scikit-learn/
+   
     # finl version
