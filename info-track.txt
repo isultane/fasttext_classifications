@@ -29,3 +29,4 @@ model = fasttext.load_model("model_ambari.bin") (working good)
 - [Done!] new sytem enviroment to test the code with bigger memory size
 - [Done!] cross-roject validation evaluation
 - [Done!] new approach tested for other MLs
+- [Done!] first paper submitted!
