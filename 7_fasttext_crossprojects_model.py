@@ -10,7 +10,8 @@ import os
 import csv
 import fasttext
 
-data_path = './data/temp/'
+
+data_path = './data/bug_reports'
 
 def cross_validate_project(test_project, training_list):
     print("Cross validate: ", test_project)
